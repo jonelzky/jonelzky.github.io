@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" class="dark" id="html-root">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jonel Malabayabas | ChiNhel XFORGE Hub</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+
+  <!-- React 18 & Babel CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    body { 
+      transition: background-color 0.3s ease, color 0.3s ease; 
+    }
+    
+    .dark body { 
+      background-color: #03060c; 
+      color: #f8fafc; 
+    }
+    body:not(.dark body), html:not(.dark) body { 
+      background-color: #f1f5f9; 
+      color: #0f172a; 
+    }
+
+    /* ANIMATED NEON BORDER */
+    @keyframes neonBorderMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .animated-border {
+      position: relative;
+      border-radius: 1.25rem;
+      transition: background-color 0.3s ease;
+    }
+    .dark .animated-border { background: #080d1a; }
+    html:not(.dark) .animated-border { background: #ffffff; }
+
+    .animated-border::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      border-radius: 1.35rem;
+      background: linear-gradient(90deg, #00f2fe, #4facfe, #ff7e5f, #feb47b, #00f2fe);
+      background-size: 300% 300%;
+      z-index: -1;
+      animation: neonBorderMove 5s ease infinite;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.25), 0 0 25px rgba(255, 126, 95, 0.2);
+    }
+
+    @keyframes textGlowMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .neon-text-animated {
+      background: linear-gradient(90deg, #00f2fe, #4facfe, #ff7e5f, #feb47b, #00f2fe);
+      background-size: 250% auto;
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: textGlowMove 4s linear infinite;
+    }
+
+    .app-card {
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      border-radius: 1rem;
+    }
+    .dark .app-card { 
+      background: rgba(10, 16, 31, 0.85); 
+      border: 1px solid rgba(0, 242, 254, 0.15); 
+      color: #f8fafc;
+    }
+    html:not(.dark) .app-card { 
+      background: rgba(255, 255, 255, 0.9); 
+      border: 1px solid rgba(0, 150, 255, 0.25); 
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      color: #0f172a;
+    }
+
+    .app-card:hover {
+      border-color: rgba(255, 126, 95, 0.5);
+      box-shadow: 0 0 25px rgba(0, 242, 254, 0.12);
+      transform: translateY(-2px);
+    }
+
+    /* STICKY SEARCH ENGINE BAR GLASS EFFECT */
+    .sticky-search-bar {
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .dark .sticky-search-bar {
+      background: rgba(3, 6, 12, 0.85);
+      border-bottom: 1px solid rgba(0, 242, 254, 0.15);
+    }
+    html:not(.dark) .sticky-search-bar {
+      background: rgba(241, 245, 249, 0.85);
+      border-bottom: 1px solid rgba(0, 150, 255, 0.15);
+    }
+
+    .dark .text-adaptive-muted { color: #94a3b8; }
+    html:not(.dark) .text-adaptive-muted { color: #475569; }
+
+    .dark .bg-adaptive-badge { background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.2); color: #00f2fe; }
+    html:not(.dark) .bg-adaptive-badge { background: rgba(0, 120, 255, 0.1); border-color: rgba(0, 120, 255, 0.2); color: #0284c7; }
+
+    .dark .bg-adaptive-tag { background: #020617; border-color: rgba(0, 242, 254, 0.3); color: #38bdf8; }
+    html:not(.dark) .bg-adaptive-tag { background: #f8fafc; border-color: rgba(0, 150, 255, 0.3); color: #0369a1; }
+  </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-cyan-500 selection:text-black pb-12">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    function App() {
+      const [repos, setRepos] = React.useState([]);
+      const [loading, setLoading] = React.useState(true);
+      const [error, setError] = React.useState(false);
+
+      const [isDarkMode, setIsDarkMode] = React.useState(true);
+      const [viewMode, setViewMode] = React.useState('grid');
+      const [searchQuery, setSearchQuery] = React.useState('');
+      const [selectedCategory, setSelectedCategory] = React.useState('All');
+      const [copied, setCopied] = React.useState(false);
+
+      const toggleTheme = () => {
+        const newMode = !isDarkMode;
+        setIsDarkMode(newMode);
+        const html = document.getElementById('html-root');
+        if (newMode) {
+          html.classList.add('dark');
+        } else {
+          html.classList.remove('dark');
+        }
+      };
+
+      const handleCopyShare = () => {
+        navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      };
+
+      React.useEffect(() => {
+        fetch('https://api.github.com/users/jonelzky/repos?sort=updated&direction=desc')
+          .then(res => {
+            if (!res.ok) throw new Error("Failed to fetch");
+            return res.json();
+          })
+          .then(data => {
+            const filtered = data.filter(repo => repo.name.toLowerCase() !== 'jonelzky.github.io');
+            setRepos(filtered);
+            setLoading(false);
+          })
+          .catch(err => {
+            console.error(err);
+            setError(true);
+            setLoading(false);
+          });
+      }, []);
+
+      const latestRepo = repos.length > 0 ? repos[0] : null;
+      const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
+      const categories = ['All', ...new Set(repos.map(r => r.language).filter(Boolean))];
+
+      const otherRepos = repos.length > 1 ? repos.slice(1).filter(app => {
+        const matchesSearch = app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (app.description && app.description.toLowerCase().includes(searchQuery.toLowerCase()));
+        
+        const matchesCategory = selectedCategory === 'All' || app.language === selectedCategory;
+
+        return matchesSearch && matchesCategory;
+      }) : [];
+
+      return (
+        <div className="max-w-3xl mx-auto px-4 pt-6 flex flex-col min-h-screen justify-between">
+          
+          {/* Header */}
+          <header className="animated-border p-6 sm:p-7 rounded-2xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-2xl">
+            <div className="text-center sm:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-adaptive-badge border text-xs font-semibold mb-2">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                jonelzky.github.io
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-black neon-text-animated tracking-tight">
+                ChiNhel XFORGE
+              </h1>
+              <p className="text-xs text-adaptive-muted mt-1 font-medium"> 2026 Apps Hub</p>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleCopyShare}
+                className="px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-400 text-cyan-400 flex items-center gap-1.5 text-xs font-bold transition active:scale-95 shadow-md"
+                title="Share Hub Link"
+              >
+                <i className={`fa-solid ${copied ? 'fa-check text-green-400' : 'fa-share-nodes'}`}></i>
+                <span>{copied ? 'Copied!' : 'Share'}</span>
+              </button>
+
+              <button 
+                onClick={toggleTheme}
+                className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-400 text-cyan-400 flex items-center justify-center transition active:scale-95 shadow-md"
+                title="Toggle Light/Dark Mode"
+              >
+                <i className={`fa-solid ${isDarkMode ? 'fa-sun text-orange-400' : 'fa-moon text-cyan-400'}`}></i>
+              </button>
+
+              <a 
+                href="https://github.com/jonelzky" 
+                target="_blank" 
+                className="px-4 py-2.5 bg-slate-900 border border-slate-700 hover:border-orange-400/60 rounded-xl text-xs font-semibold text-slate-200 flex items-center gap-2 transition active:scale-95 shadow-md"
+              >
+                <i className="fa-brands fa-github text-sm text-cyan-400"></i>
+                <span>GitHub</span>
+              </a>
+            </div>
+          </header>
+
+          {/* TOTAL STATS COUNTER BAR */}
+          {!loading && repos.length > 0 && (
+            <div className="grid grid-cols-3 gap-3 mb-6 text-center">
+              <div className="app-card p-3">
+                <div className="text-[10px] sm:text-xs text-adaptive-muted font-bold uppercase tracking-wider">Total Apps</div>
+                <div className="text-lg sm:text-xl font-black text-cyan-400 mt-0.5">{repos.length}</div>
+              </div>
+              <div className="app-card p-3">
+                <div className="text-[10px] sm:text-xs text-adaptive-muted font-bold uppercase tracking-wider">Total Stars</div>
+                <div className="text-lg sm:text-xl font-black text-orange-400 mt-0.5">⭐ {totalStars}</div>
+              </div>
+              <div className="app-card p-3">
+                <div className="text-[10px] sm:text-xs text-adaptive-muted font-bold uppercase tracking-wider">Latest Sync</div>
+                <div className="text-[10px] sm:text-xs font-bold text-slate-300 mt-1 font-mono">
+                  {new Date(repos[0].updated_at).toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STICKY SEARCH ENGINE & FILTER BAR */}
+          {!loading && (
+            <div className="sticky top-0 z-50 py-3 mb-6 sticky-search-bar px-2 rounded-2xl transition-all">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5">
+                
+                {/* Search Engine Input */}
+                <div className="relative w-full sm:flex-1">
+                  <i className="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-cyan-400 text-xs"></i>
+                  <input 
+                    type="text"
+                    placeholder="Search engine: Type app name or keyword..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-8 py-2 bg-slate-900/20 dark:bg-slate-950 light:bg-white border border-slate-700/60 rounded-xl text-xs placeholder-slate-400 focus:outline-none focus:border-cyan-400 shadow-inner"
+                  />
+                  {searchQuery && (
+                    <button 
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs"
+                    >
+                      <i className="fa-solid fa-circle-xmark"></i>
+                    </button>
+                  )}
+                </div>
+
+                {/* Controls: Category Badges & View Switcher */}
+                <div className="flex items-center justify-between w-full sm:w-auto gap-2">
+                  {/* Category Filter Pills */}
+                  <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1">
+                    {categories.map((cat, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedCategory(cat)}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap transition ${selectedCategory === cat ? 'bg-gradient-to-r from-cyan-400 to-orange-400 text-slate-950 shadow-md' : 'bg-slate-900/20 border border-slate-700/40 text-slate-400 hover:text-cyan-300'}`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Grid / List View Toggle Buttons */}
+                  <div className="flex items-center gap-1 flex-shrink-0 border-l border-slate-700/40 pl-2">
+                    <button 
+                      onClick={() => setViewMode('grid')}
+                      className={`w-7 h-7 rounded-lg border text-xs flex items-center justify-center transition ${viewMode === 'grid' ? 'bg-cyan-500/20 border-cyan-400 text-cyan-400' : 'bg-slate-900/10 dark:bg-slate-950 light:bg-white border-slate-700/50 text-slate-400'}`}
+                      title="Grid View"
+                    >
+                      <i className="fa-solid fa-table-cells"></i>
+                    </button>
+
+                    <button 
+                      onClick={() => setViewMode('list')}
+                      className={`w-7 h-7 rounded-lg border text-xs flex items-center justify-center transition ${viewMode === 'list' ? 'bg-cyan-500/20 border-cyan-400 text-cyan-400' : 'bg-slate-900/10 dark:bg-slate-950 light:bg-white border-slate-700/50 text-slate-400'}`}
+                      title="List View"
+                    >
+                      <i className="fa-solid fa-list"></i>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          <main className="space-y-8 flex-1">
+            
+            {loading && (
+              <div className="text-center py-20">
+                <i className="fa-solid fa-spinner fa-spin text-3xl text-cyan-400 mb-3"></i>
+                <p className="text-xs text-adaptive-muted font-mono">Kukuhanin ang iyong mga apps mula sa GitHub...</p>
+              </div>
+            )}
+
+            {error && (
+              <div className="text-center py-12 text-orange-400 text-xs">
+                May nangyaring error sa pagkonekta sa GitHub API. Subukang i-refresh mamaya.
+              </div>
+            )}
+
+            {/* SECTION 1: LATEST APP SPOTLIGHT */}
+            {!loading && latestRepo && !searchQuery && selectedCategory === 'All' && (
+              <section>
+                <div className="flex items-center gap-2 mb-3 px-1">
+                  <i className="fa-solid fa-gears text-orange-400 text-sm animate-spin"></i>
+                  <h2 className="text-xs font-bold text-adaptive-muted uppercase tracking-wider">Latest Release Spotlight</h2>
+                </div>
+
+                <div className="animated-border p-6 sm:p-7 rounded-2xl relative overflow-hidden group">
+                  <div className="absolute top-4 right-4 bg-gradient-to-r from-cyan-400 to-orange-500 text-slate-950 font-black text-[10px] uppercase px-3.5 py-1 rounded-full shadow-lg">
+                    LATEST UPDATE
+                  </div>
+
+                  <div className="mb-4 pr-16">
+                    <span className="text-xs font-bold text-cyan-400 tracking-wide block mb-1 uppercase">
+                      {latestRepo.language || 'Web / Mobile App'}
+                    </span>
+                    <h3 className="text-2xl sm:text-3xl font-black group-hover:text-cyan-400 transition">
+                      {latestRepo.name}
+                    </h3>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-adaptive-muted leading-relaxed mb-6">
+                    {latestRepo.description || "Walang nakalagay na description ang repository na ito sa GitHub."}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-6 font-mono text-[10px]">
+                    {latestRepo.language && (
+                      <span className="bg-adaptive-tag px-2.5 py-1 rounded-md border">
+                        {latestRepo.language}
+                      </span>
+                    )}
+                    <span className="bg-adaptive-tag px-2.5 py-1 rounded-md border text-orange-400">
+                      ⭐ {latestRepo.stargazers_count} Stars
+                    </span>
+                    <span className="bg-adaptive-tag px-2.5 py-1 rounded-md border text-adaptive-muted">
+                      Updated: {new Date(latestRepo.updated_at).toLocaleDateString()}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <a 
+                      href={latestRepo.homepage || `https://jonelzky.github.io/${latestRepo.name}/`} 
+                      target="_blank"
+                      className="py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-400 via-blue-500 to-orange-500 text-slate-950 font-black text-xs text-center shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2 active:scale-95"
+                    >
+                      <i className="fa-solid fa-globe text-sm"></i>
+                      <span>Visit Live Site</span>
+                    </a>
+                    <a 
+                      href={`${latestRepo.html_url}/releases`} 
+                      target="_blank"
+                      className="py-3 px-4 rounded-xl bg-slate-950 dark:bg-slate-950 light:bg-slate-200 hover:opacity-90 text-cyan-300 border border-cyan-500/40 font-bold text-xs text-center transition flex items-center justify-center gap-2 active:scale-95 shadow-inner"
+                    >
+                      <i className="fa-solid fa-download text-sm"></i>
+                      <span>Download APK / Releases</span>
+                    </a>
+                  </div>
+                </div>
+              </section>
+            )}
+
+
+            {/* SECTION 2: LIST OF CREATED APPS */}
+            {!loading && (
+              <section className="pt-2">
+                <div className="flex items-center gap-2 mb-3 px-1">
+                  <i className="fa-solid fa-layer-group text-cyan-400 text-sm"></i>
+                  <h2 className="text-xs font-bold text-adaptive-muted uppercase tracking-wider">
+                    Created Apps Directory ({otherRepos.length})
+                  </h2>
+                </div>
+
+                {viewMode === 'grid' ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {otherRepos.map((app) => (
+                      <div key={app.id} className="app-card p-5 rounded-2xl flex flex-col justify-between gap-4 group">
+                        <div>
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="w-10 h-10 rounded-xl bg-slate-950/20 border border-slate-700/50 flex items-center justify-center text-cyan-400 text-lg flex-shrink-0 group-hover:border-cyan-400 transition">
+                              <i className="fa-solid fa-cube"></i>
+                            </div>
+                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-adaptive-badge border font-mono">
+                              {app.language || 'App'}
+                            </span>
+                          </div>
+                          <h3 className="text-base font-bold group-hover:text-cyan-400 transition mb-1">{app.name}</h3>
+                          <p className="text-xs text-adaptive-muted leading-relaxed line-clamp-2">
+                            {app.description || "Walang description."}
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-700/20">
+                          <a 
+                            href={app.homepage || `https://jonelzky.github.io/${app.name}/`} 
+                            target="_blank"
+                            className="py-2 px-2 rounded-xl bg-slate-950/10 dark:bg-slate-950 light:bg-slate-200 hover:bg-gradient-to-r hover:from-cyan-400 hover:to-orange-500 hover:text-slate-950 text-cyan-400 border border-cyan-500/30 text-[11px] font-bold text-center transition flex items-center justify-center gap-1"
+                          >
+                            <i className="fa-solid fa-globe text-[10px]"></i>
+                            <span>Visit</span>
+                          </a>
+                          <a 
+                            href={app.html_url} 
+                            target="_blank"
+                            className="py-2 px-2 rounded-xl bg-slate-950/10 dark:bg-slate-950 light:bg-slate-200 hover:opacity-80 border border-slate-700/50 text-[11px] font-semibold text-center transition flex items-center justify-center gap-1"
+                          >
+                            <i className="fa-solid fa-code text-[10px]"></i>
+                            <span>Code</span>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {otherRepos.map((app) => (
+                      <div key={app.id} className="app-card p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                        <div className="flex items-center gap-3.5">
+                          <div className="w-10 h-10 rounded-xl bg-slate-950/20 border border-slate-700/50 flex items-center justify-center text-cyan-400 text-lg flex-shrink-0 group-hover:border-cyan-400 transition">
+                            <i className="fa-solid fa-cube"></i>
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-sm font-bold group-hover:text-cyan-400 transition">{app.name}</h3>
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-adaptive-badge border font-mono">
+                                {app.language || 'App'}
+                              </span>
+                            </div>
+                            <p className="text-xs text-adaptive-muted mt-0.5">{app.description || "Walang description."}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <a 
+                            href={app.homepage || `https://jonelzky.github.io/${app.name}/`} 
+                            target="_blank"
+                            className="py-2 px-3 rounded-xl bg-slate-950/10 dark:bg-slate-950 light:bg-slate-200 hover:bg-gradient-to-r hover:from-cyan-400 hover:to-orange-500 hover:text-slate-950 text-cyan-400 border border-cyan-500/30 text-xs font-bold text-center transition flex items-center gap-1.5"
+                          >
+                            <i className="fa-solid fa-globe text-[10px]"></i>
+                            <span>Visit</span>
+                          </a>
+                          <a 
+                            href={app.html_url} 
+                            target="_blank"
+                            className="py-2 px-3 rounded-xl bg-slate-950/10 dark:bg-slate-950 light:bg-slate-200 hover:opacity-80 border border-slate-700/50 text-xs font-semibold text-center transition flex items-center gap-1.5"
+                          >
+                            <i className="fa-solid fa-code text-[10px]"></i>
+                            <span>Code</span>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {otherRepos.length === 0 && (
+                  <div className="text-center py-12 text-adaptive-muted text-xs">
+                    <i className="fa-solid fa-magnifying-glass text-2xl text-slate-600 mb-2 block"></i>
+                    Walang nakitang app na tumutugma sa iyong search o filter.
+                  </div>
+                )}
+              </section>
+            )}
+
+          </main>
+
+          {/* Footer */}
+          <footer className="mt-12 pt-6 border-t border-slate-700/30 text-center text-xs text-adaptive-muted">
+            <p>ChiNhel XFORGE Engine &copy; 2026</p>
+            <p className="mt-1 text-[11px] font-mono">Powered by GitHub API on <span className="text-cyan-400">jonelzky.github.io</span></p>
+          </footer>
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+
+</body>
+</html>
