@@ -34,7 +34,7 @@
       background-color: #f1f5f9; 
       color: #0f172a; 
     }
-
+   
     /* ANIMATED NEON BORDER */
     @keyframes neonBorderMove {
       0% { background-position: 0% 50%; }
@@ -50,17 +50,17 @@
     .dark .animated-border { background: #080d1a; }
     html:not(.dark) .animated-border { background: #ffffff; }
 
-    .animated-border::before {
-      content: '';
-      position: absolute;
-      top: -2px; left: -2px; right: -2px; bottom: -2px;
-      border-radius: 1.35rem;
-      background: linear-gradient(90deg, #00f2fe, #4facfe, #ff7e5f, #feb47b, #00f2fe);
-      background-size: 300% 300%;
-      z-index: -1;
-      animation: neonBorderMove 5s ease infinite;
-      box-shadow: 0 0 20px rgba(0, 242, 254, 0.25), 0 0 25px rgba(255, 126, 95, 0.2);
-    }
+.animated-border::before {
+  content: '';
+  position: absolute;
+  top: -3px; left: -3px; right: -3px; bottom: -3px;
+  border-radius: 1.35rem;
+  background: linear-gradient(90deg, #00f2fe, #4facfe, #ff7e5f, #feb47b, #00f2fe);
+  background-size: 300% 300%;
+  z-index: -1;
+  animation: neonBorderMove 3s ease infinite;
+  box-shadow: 0 0 35px rgba(0, 242, 254, 0.6), 0 0 50px rgba(255, 126, 95, 0.5);
+}
 
     @keyframes textGlowMove {
       0% { background-position: 0% 50%; }
@@ -101,6 +101,7 @@
     }
 
     /* STICKY SEARCH ENGINE BAR GLASS EFFECT */
+    
     .sticky-search-bar {
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
@@ -158,23 +159,32 @@
       };
 
       React.useEffect(() => {
-        fetch('https://api.github.com/users/jonelzky/repos?sort=updated&direction=desc')
-          .then(res => {
-            if (!res.ok) throw new Error("Failed to fetch");
-            return res.json();
-          })
-          .then(data => {
-            const filtered = data.filter(repo => repo.name.toLowerCase() !== 'jonelzky.github.io');
-            setRepos(filtered);
-            setLoading(false);
-          })
-          .catch(err => {
-            console.error(err);
-            setError(true);
-            setLoading(false);
-          });
-      }, []);
-
+  let retries = 0;
+  const fetchRepos = () => {
+    fetch('https://api.github.com/users/jonelzky/repos?sort=updated&direction=desc')
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch " + res.status);
+        return res.json();
+      })
+      .then(data => {
+        const filtered = data.filter(repo => repo.name.toLowerCase() !== 'jonelzky.github.io');
+        setRepos(filtered);
+        setLoading(false);
+        setError(false);
+      })
+      .catch(err => {
+        console.error(err);
+        if (retries < 2) {
+          retries++;
+          setTimeout(fetchRepos, 1500); // retry after 1.5s - pure autofetch pa rin!
+        } else {
+          setError(true);
+          setLoading(false);
+        }
+      });
+  };
+  fetchRepos();
+}, []);
       const latestRepo = repos.length > 0 ? repos[0] : null;
       const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
       const categories = ['All', ...new Set(repos.map(r => r.language).filter(Boolean))];
@@ -189,7 +199,7 @@
       }) : [];
 
       return (
-        <div className="max-w-full mx-auto px-4 pt-6 flex flex-col min-h-screen justify-between">
+<div className="max-w-full mx-auto px-4 pt-6 flex flex-col min-h-screen justify-between">
           
           {/* Header */}
           <header className="animated-border p-6 sm:p-7 rounded-2xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-2xl">
@@ -340,7 +350,7 @@
                   <h2 className="text-xs font-bold text-adaptive-muted uppercase tracking-wider">Latest Release Spotlight</h2>
                 </div>
 
-                <div className="animated-border p-6 sm:p-7 rounded-2xl relative overflow-hidden group">
+<div className="animated-border p-6 sm:p-7 rounded-2xl relative group">
                   <div className="absolute top-4 right-4 bg-gradient-to-r from-cyan-400 to-orange-500 text-slate-950 font-black text-[10px] uppercase px-3.5 py-1 rounded-full shadow-lg">
                     LATEST UPDATE
                   </div>
@@ -398,6 +408,7 @@
             {/* SECTION 2: LIST OF CREATED APPS */}
             {!loading && (
               <section className="pt-2">
+                          <div className="animated-border p-6 sm:p-7 rounded-2xl relative group">
                 <div className="flex items-center gap-2 mb-3 px-1">
                   <i className="fa-solid fa-layer-group text-cyan-400 text-sm"></i>
                   <h2 className="text-xs font-bold text-adaptive-muted uppercase tracking-wider">
@@ -493,17 +504,17 @@
                     Walang nakitang app na tumutugma sa iyong search o filter.
                   </div>
                 )}
+                </div>
               </section>
             )}
 
           </main>
 
           {/* Footer */}
-          <footer className="mt-12 pt-6 border-t border-slate-700/30 text-center text-xs text-adaptive-muted">
+          <footer className="animated-border p-6 sm:p-7 rounded-2xl relative group">
             <p>ChiNhel XFORGE Engine &copy; 2026</p>
             <p className="mt-1 text-[11px] font-mono">Powered by GitHub API on <span className="text-cyan-400">jonelzky.github.io</span></p>
           </footer>
-
         </div>
       );
     }
