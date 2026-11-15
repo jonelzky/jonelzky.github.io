@@ -1,2006 +1,548 @@
 <!DOCTYPE html>
-<html lang="tl">
+<html lang="en" class="dark" id="html-root">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ChiNhel PRO UTILITY CALC</title>
-<style>
-:root {
-  --bg: #070b18;
-  --card: #111a33;
-  --card2: #0f1530;
-  --border: rgba(255, 255, 255, 0.2);
-  --text: #ffffff;
-  --mut: #e2e8f0;
-  --cyan: #00e5ff;
-  --orange: #ff6b35;
-  --warn: #ff3b5c;
-}
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jonel Malabayabas | ChiNhel XFORGE Hub</title>
 
-[data-theme="light"] {
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --card2: #e2e8f0;
-  --border: rgba(15, 23, 42, 0.25);
-  --text: #0f172a;
-  --mut: #1e293b;
-}
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
 
-* { box-sizing: border-box; }
+  <!-- React 18 & Babel CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, sans-serif;
-  padding: 8px;
-  font-size: 17px;
-}
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    body { 
+      transition: background-color 0.3s ease, color 0.3s ease; 
+    }
+    
+    .dark body { 
+      background-color: #03060c; 
+      color: #f8fafc; 
+    }
+    body:not(.dark body), html:not(.dark) body { 
+      background-color: #f1f5f9; 
+      color: #0f172a; 
+    }
+   
+    /* ANIMATED NEON BORDER */
+    @keyframes neonBorderMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 10px;
-  background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  margin-bottom: 10px;
-  font-size: 1.2rem;
-  font-weight: 900;
-  position: relative;
-}
+    .animated-border {
+      position: relative;
+      border-radius: 1.25rem;
+      transition: background-color 0.3s ease;
+    }
+    .dark .animated-border { background: #080d1a; }
+    html:not(.dark) .animated-border { background: #ffffff; }
 
-.menu-btn {
-  background: var(--card2);
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  padding: 8px 12px;
-  color: var(--cyan);
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* HAMBURGER DROPDOWN MENU */
-.dropdown-menu {
-  display: grid;
+.animated-border::before {
+  content: '';
   position: absolute;
-  top: 60px;
-  left: 12px;
-  right: 12px;
-  background: var(--card);
-  border: 2px solid var(--cyan);
-  border-radius: 12px;
-  padding: 10px;
-  z-index: 1000;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.dropdown-menu.hidden { display: none; }
-
-.menu-item {
-  padding: 12px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--card2);
-  color: var(--text);
-  font-weight: 800;
-  font-size: 13px;
-  cursor: pointer;
-  text-align: center;
-}
-.menu-item.active {
-  border-color: var(--cyan);
-  color: var(--cyan);
-  background: rgba(0,229,255,0.1);
+  top: -3px; left: -3px; right: -3px; bottom: -3px;
+  border-radius: 1.35rem;
+  background: linear-gradient(90deg, #00f2fe, #4facfe, #ff7e5f, #feb47b, #00f2fe);
+  background-size: 300% 300%;
+  z-index: -1;
+  animation: neonBorderMove 3s ease infinite;
+  box-shadow: 0 0 35px rgba(0, 242, 254, 0.6), 0 0 50px rgba(255, 126, 95, 0.5);
 }
 
-.calc-section-view { display: none; }
-.calc-section-view.active { display: block; }
+    @keyframes textGlowMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-.tutorial-box {
-  background: var(--card);
-  border: 2px solid var(--cyan);
-  border-radius: 12px;
-  padding: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 14px;
-  line-height: 1.6;
-}
+    .neon-text-animated {
+      background: linear-gradient(90deg, #00f2fe, #4facfe, #ff7e5f, #feb47b, #00f2fe);
+      background-size: 250% auto;
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: textGlowMove 4s linear infinite;
+    }
 
-/* Calculator Display & History Styles */
-.calc-display-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-end;
-  padding: 4px 8px;
-}
-.calc-history {
-  text-align: right;
-  color: var(--mut);
-  font-size: 14px;
-  margin-bottom: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-height: 100px;
-  overflow-y: auto;
-  width: 100%;
-}
-.history-item {
-  opacity: 0.7;
-  word-break: break-all;
-}
-.calc-screen {
-  background: transparent;
-  border: none;
-  padding: 0 0 10px 0;
-  text-align: right;
-  font-family: monospace;
-  font-size: 2.8rem;
-  font-weight: 400;
-  color: var(--text);
-  margin-bottom: 10px;
-  word-break: break-all;
-  min-height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-}
-.cursor {
-  color: var(--cyan);
-  font-weight: 300;
-  animation: blink 1s infinite;
-}
-@keyframes blink { 50% { opacity: 0; } }
+    .app-card {
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      border-radius: 1rem;
+    }
+    .dark .app-card { 
+      background: rgba(10, 16, 31, 0.85); 
+      border: 1px solid rgba(0, 242, 254, 0.15); 
+      color: #f8fafc;
+    }
+    html:not(.dark) .app-card { 
+      background: rgba(255, 255, 255, 0.9); 
+      border: 1px solid rgba(0, 150, 255, 0.25); 
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      color: #0f172a;
+    }
 
-/* Grid adjustments for MIUI style */
-.calc-grid {
-  display: grid;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-.calc-grid.scientific-mode {
-  grid-template-columns: repeat(5, 1fr);
-}
-.calc-grid:not(.scientific-mode) {
-  grid-template-columns: repeat(4, 1fr);
-}
-.calc-grid:not(.scientific-mode) .sci {
-  display: none;
-}
+    .app-card:hover {
+      border-color: rgba(255, 126, 95, 0.5);
+      box-shadow: 0 0 25px rgba(0, 242, 254, 0.12);
+      transform: translateY(-2px);
+    }
 
-/* Button styling refinement */
-.calc-btn {
-  height: 54px; /* Binabaan nang konti para magkasya ang 7 rows sa scientific mode */
-  border-radius: 14px;
-  border: none;
-  background: var(--card);
-  color: var(--text);
-  font-weight: 600;
-  font-size: 2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
+    /* STICKY SEARCH ENGINE BAR GLASS EFFECT */
+    
+    .sticky-search-bar {
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .dark .sticky-search-bar {
+      background: rgba(3, 6, 12, 0.85);
+      border-bottom: 1px solid rgba(0, 242, 254, 0.15);
+    }
+    html:not(.dark) .sticky-search-bar {
+      background: rgba(241, 245, 249, 0.85);
+      border-bottom: 1px solid rgba(0, 150, 255, 0.15);
+    }
 
-.calc-btn:active {
-  opacity: 0.7;
-}
-.calc-btn.op, .calc-btn.action {
-  color: var(--orange);
-}
-.calc-btn.sci {
-  color: var(--cyan);
-  font-size: 0.95rem;
-}
-.calc-btn.equals {
-  background: var(--orange);
-  color: #fff;
-  font-size: 1.4rem;
-}
+    .dark .text-adaptive-muted { color: #94a3b8; }
+    html:not(.dark) .text-adaptive-muted { color: #475569; }
 
-/* CALCULATOR - Pareho na sa ibang tab */
-#sciTab {
-  display: none;
-  flex-direction: column;
-  height: auto;
-  min-height: auto;
-  justify-content: flex-start;
-}
+    .dark .bg-adaptive-badge { background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.2); color: #00f2fe; }
+    html:not(.dark) .bg-adaptive-badge { background: rgba(0, 120, 255, 0.1); border-color: rgba(0, 120, 255, 0.2); color: #0284c7; }
 
-#sciTab.active {
-  display: flex !important;
-}
-
-#sciTab .calc-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  padding-bottom: 10px;
-}
-
-#sciTab .calc-display-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-/* Inayos ko yung doble mong .calc-history - ito na lang yung gagamitin */
-.calc-history {
-  text-align: right;
-  color: var(--mut);
-  font-size: 14px;
-  margin-bottom: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-height: 80px;
-  overflow-y: auto;
-  width: 100%;
-}
-
-.history-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text);
-}
-
-.calc-btn.mem {
-  background: rgba(0, 229, 255, 0.1);
-  color: var(--cyan);
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-.mem-indicator {
-  position: absolute;
-  top: 8px;
-  left: 12px;
-  background: var(--cyan, #00e5ff);
-  color: #0f172a;
-  font-size: 0.75rem;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-#sciTab .calc-screen {
-  margin-bottom: 4px;
-  padding: 0 4px;
-  min-height: 60px;
-}
-
-/* Tinanggal ko yung sticky - yan yung nagpapaliit sa WebView */
-#sciTab .calc-grid {
-  position: static;
-  background: transparent;
-  padding-bottom: 0;
-  margin-bottom: 10px;
-  border-top: none;
-}
-
-.pill {
-  padding: 14px 18px;
-  border-radius: 999px;
-  border: 2px solid var(--border);
-  background: var(--card);
-  font-size: 16px;
-  font-family: monospace;
-  font-weight: bold;
-  color: var(--text);
-  outline: none;
-  width: 100%;
-}
-
-.card-box {
-  background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 14px;
-}
-
-.footer-note { text-align: center; font-size: 11px; color: var(--mut); margin-top: 20px; padding: 12px; line-height: 1.5; font-weight: bold; }
-</style>
+    .dark .bg-adaptive-tag { background: #020617; border-color: rgba(0, 242, 254, 0.3); color: #38bdf8; }
+    html:not(.dark) .bg-adaptive-tag { background: #f8fafc; border-color: rgba(0, 150, 255, 0.3); color: #0369a1; }
+  </style>
 </head>
-<body>
-<div class="header">
-  <button class="menu-btn" onclick="toggleMenu()">☰ <span id="currentMenuTitle" style="font-size:12px">Menu</span></button>
-  <div style="font-weight:900; font-size: 1.4rem; background: linear-gradient(135deg, #00e5ff, #00ff88, #ff6b35); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;">
-    ChiNhel PRO V1
-  </div>
-  <button id="toggle" style="background:var(--card2);border:2px solid var(--border);border-radius:999px;padding:8px 14px;color:var(--text);cursor:pointer;font-size:12px;font-weight:900">🌙</button>
-
-<!-- DROPDOWN MENU ITEMS -->
-  <div id="dropdownMenu" class="dropdown-menu hidden">
-    <button class="menu-item active" onclick="switchCalcTab('scientific', 'Scientific', this)">Scientific</button>
-    <button class="menu-item" onclick="switchCalcTab('converter', 'Converters', this)">Converters</button>
-    <button class="menu-item" onclick="switchCalcTab('workshop', 'Welding/Fab', this)">Welding/Fab</button>
-    <button class="menu-item" onclick="switchCalcTab('pipe', 'Pipe Bending', this)">Pipe Bending</button>
-    <button class="menu-item" onclick="switchCalcTab('wiring', 'Wiring Est.', this)">Wiring Est.</button>
-    <button class="menu-item" onclick="switchCalcTab('solargen', 'Solar & Gen', this)">Solar & Gen</button>
-    <button class="menu-item" onclick="switchCalcTab('pecdrop', 'PEC & Drop', this)">PEC & Drop</button>
-    <button class="menu-item" onclick="switchCalcTab('bill', 'Bill Calc', this)">Bill Calc</button>
-    <button class="menu-item" onclick="switchCalcTab('loadsched', 'Load Sched', this)">Load Sched</button>
-    <button class="menu-item" onclick="switchCalcTab('history', 'History', this)">History</button>
-  </div>
-</div>
-
-<!-- SCIENTIFIC / CALCULATOR TAB -->
-<div id="sciTab" class="calc-section-view active">
-  <div class="calc-container">   
-    <!-- History Logs Area (Nasa itaas ng screen) -->
-    <div class="calc-history" id="calcHistoryLogs"></div>
-    
-    <!-- Main Result Screen -->
-      <span id="memIndicator" style="display: none; color: var(--cyan, #00e5ff); font-size: 1rem; font-weight: bold; margin-left: 8px;">M+</span>
-      
-    <div class="calc-screen" id="calcScreen">0<span class="cursor">|</span></div>
-
-    <!-- Keypad Grid (MIUI Style Layout) -->
-    <div class="calc-grid scientific-mode" id="calcGrid">
-     
-     <!-- Memory Buttons Row -->
-<button class="calc-btn mem" onclick="memoryClear()">MC</button>
-<button class="calc-btn mem" onclick="memoryRecall()">MR</button>
-<button class="calc-btn mem" onclick="memoryAdd()">M+</button>
-<button class="calc-btn mem" onclick="memorySub()">M-</button>
-<button class="calc-btn sci" onclick="calcAppend('2nd')">2nd</button>
-
-      <!-- Scientific Row 1 -->
-      <button class="calc-btn sci" onclick="calcAppend('2nd')">2nd</button>
-      <button class="calc-btn sci" id="degBtn" onclick="toggleDegRad()">deg</button>
-      <button class="calc-btn sci" onclick="calcAppend('sin(')">sin</button>
-      <button class="calc-btn sci" onclick="calcAppend('cos(')">cos</button>
-      <button class="calc-btn sci" onclick="calcAppend('tan(')">tan</button>
-
-      <!-- Scientific Row 2 -->
-      <button class="calc-btn sci" onclick="calcAppend('**')">x<sup>y</sup></button>
-      <button class="calc-btn sci" onclick="calcAppend('Math.log10(')">lg</button>
-      <button class="calc-btn sci" onclick="calcAppend('Math.log(')">ln</button>
-      <button class="calc-btn sci" onclick="calcAppend('(')">(</button>
-      <button class="calc-btn sci" onclick="calcAppend(')')">)</button>
-
-      <!-- Row 3 -->
-      <button class="calc-btn sci" onclick="calcAppend('Math.sqrt(')">√x</button>
-      <button class="calc-btn action" onclick="calcClear()">AC</button>
-      <button class="calc-btn action" onclick="calcBackspace()">⌫</button>
-      <button class="calc-btn action" onclick="calcAppend('%')">%</button>
-      <button class="calc-btn op" onclick="calcAppend('/')">÷</button>
-
-      <!-- Row 4 -->
-      <button class="calc-btn sci" onclick="calcAppend('!')">x!</button>
-      <button class="calc-btn num" onclick="calcAppend('7')">7</button>
-      <button class="calc-btn num" onclick="calcAppend('8')">8</button>
-      <button class="calc-btn num" onclick="calcAppend('9')">9</button>
-      <button class="calc-btn op" onclick="calcAppend('*')">×</button>
-
-      <!-- Row 5 -->
-      <button class="calc-btn sci" onclick="calcAppend('1/')">1/x</button>
-      <button class="calc-btn num" onclick="calcAppend('4')">4</button>
-      <button class="calc-btn num" onclick="calcAppend('5')">5</button>
-      <button class="calc-btn num" onclick="calcAppend('6')">6</button>
-      <button class="calc-btn op" onclick="calcAppend('-')">-</button>
-
-      <!-- Row 6 -->
-      <button class="calc-btn sci" onclick="calcAppend('Math.PI')">π</button>
-      <button class="calc-btn num" onclick="calcAppend('1')">1</button>
-      <button class="calc-btn num" onclick="calcAppend('2')">2</button>
-      <button class="calc-btn num" onclick="calcAppend('3')">3</button>
-      <button class="calc-btn op" onclick="calcAppend('+')">+</button>
-
-      <!-- Row 7 -->
-      <button class="calc-btn sci-toggle" onclick="toggleSciLayout()" title="Toggle Scientific">🔀</button>
-      <button class="calc-btn sci" onclick="calcAppend('Math.E')">e</button>
-      <button class="calc-btn num" onclick="calcAppend('0')">0</button>
-      <button class="calc-btn num" onclick="calcAppend('.')">.</button>
-      <button class="calc-btn equals" onclick="calcCompute()">=</button>
-    </div>
-  </div>
-</div>
-
-<!-- CONVERTERS HUB TAB -->
-<div id="converterTab" class="calc-section-view">
-  <div class="tutorial-box"><b>📖 Complete Converters Hub:</b></div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--cyan)">⚡ Power Converter (HP ↔ kW ↔ Watts)</b>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <input id="powerHp" class="pill" placeholder="Horsepower" oninput="convertPower('hp')">
-      <input id="powerKw" class="pill" placeholder="Kilowatts" oninput="convertPower('kw')">
-    </div>
-    <div style="margin-top:10px"><input id="powerWatts" class="pill" placeholder="Watts" oninput="convertPower('watts')"></div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--orange)">📏 Length Converter</b>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <input id="lenMm" class="pill" placeholder="mm" oninput="convertLength('mm')">
-      <input id="lenCm" class="pill" placeholder="cm" oninput="convertLength('cm')">
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <input id="lenM" class="pill" placeholder="Meters" oninput="convertLength('m')">
-      <input id="lenInch" class="pill" placeholder="Inches" oninput="convertLength('inch')">
-    </div>
-    <div style="margin-top:10px"><input id="lenFeet" class="pill" placeholder="Feet" oninput="convertLength('feet')"></div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--cyan)">⚖️ Weight Converter</b>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <input id="wKg" class="pill" placeholder="Kilograms" oninput="convertWeight('kg')">
-      <input id="wLbs" class="pill" placeholder="Pounds" oninput="convertWeight('lbs')">
-    </div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--orange)">🌡️ Temperature Converter</b>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <input id="tempC" class="pill" placeholder="Celsius" oninput="convertTemp('c')">
-      <input id="tempF" class="pill" placeholder="Fahrenheit" oninput="convertTemp('f')">
-    </div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--cyan)">💱 Currency & Ohm's Law</b>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <input id="usdVal" class="pill" placeholder="USD ($)" oninput="convertCurrency()">
-      <div id="phpResult" style="font-size:14px;color:var(--orange);display:flex;align-items:center;font-weight:900">PHP: ₱0.00</div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <input id="ohmCurrent" class="pill" placeholder="Amps" oninput="calculateOhm()">
-      <input id="ohmResistance" class="pill" placeholder="Ohms" oninput="calculateOhm()">
-    </div>
-    <div id="ohmResult" style="font-size:14px;color:var(--cyan);margin-top:8px;font-weight:900">Voltage (V): 0 V</div>
-  </div>
-</div>
-
-<!-- WELDING & FABRICATION TAB -->
-<div id="workshopTab" class="calc-section-view">
-  <div class="tutorial-box"><b>🛠️ Welding & Custom Metal Fabrication Tools:</b></div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--cyan)">📐 1. Pie-Cut / Segmented Arc Layout</b>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <input id="pieAngle" class="pill" value="90" oninput="calcPieCut()">
-      <input id="pieSegments" class="pill" value="4" oninput="calcPieCut()">
-    </div>
-    <div style="margin-top:10px"><input id="pieRadius" class="pill" value="300" oninput="calcPieCut()"></div>
-    <div id="pieResult" style="font-size:14px;color:var(--orange);margin-top:12px;font-weight:900">• Miter Angle: 11.25° | Segments: 22.5°</div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--orange)">🔢 2. 3D Metal Lettering / Signage Layout</b>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <input id="letHeight" class="pill" value="1000" oninput="calcLettering()">
-      <input id="letDepth" class="pill" value="150" oninput="calcLettering()">
-    </div>
-    <div id="letterResult" style="font-size:14px;color:var(--cyan);margin-top:12px;font-weight:900">• Side Return Strip Width: 170 mm</div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--cyan)">🛢️ 3. Cylindrical Ring / Tank Sheet Layout</b>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <input id="tankDia" class="pill" value="800" oninput="calcTankSheet()">
-      <input id="tankHeight" class="pill" value="500" oninput="calcTankSheet()">
-    </div>
-    <div id="tankResult" style="font-size:14px;color:var(--orange);margin-top:12px;font-weight:900">• Cut Length: 2513 mm | Area: 1.26 m²</div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--cyan)">⚡ 4. SMAW Welding Rod & Amperage Guide</b>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <select id="rodType" class="pill" onchange="calcWeldingSetting()"><option value="E6013">E6013</option><option value="E7018">E7018</option><option value="E6011">E6011</option></select>
-      <select id="rodSize" class="pill" onchange="calcWeldingSetting()"><option value="2.0">2.0 mm</option><option value="2.5" selected>2.5 mm</option><option value="3.2">3.2 mm</option></select>
-    </div>
-    <div id="weldingGuideResult" style="font-size:14px;color:var(--cyan);margin-top:12px;font-weight:900">• Amperage: 60A - 90A</div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--orange)">📐 5. Sheet Metal Bend Allowance</b>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
-      <input id="bendAngle" class="pill" placeholder="Angle" oninput="calcBend()">
-      <input id="bendRadius" class="pill" placeholder="Radius" oninput="calcBend()">
-      <input id="bendThick" class="pill" placeholder="Thickness" oninput="calcBend()">
-    </div>
-    <div id="bendResult" style="font-size:14px;color:var(--cyan);margin-top:10px;font-weight:900">Total Bend Allowance: 0 mm</div>
-  </div>
-</div>
-
-<!-- PIPE OFFSET TAB -->
-<div id="pipeTab" class="calc-section-view">
-  <div class="tutorial-box"><b>📖 Conduit Bending & PEC Wire Fill Tools:</b></div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--cyan)">🌀 Simple Pipe Offset</b>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
-      <input id="pipeRise" class="pill" placeholder="Obstacle Rise" oninput="calcPipeOffset()">
-      <select id="pipeAngle" class="pill" onchange="calcPipeOffset()"><option value="30" selected>30° Bend</option><option value="45">45° Bend</option><option value="22">22.5° Bend</option></select>
-    </div>
-    <div id="pipeResult" style="font-size:14px;color:var(--orange);margin-top:12px;font-weight:900">Distance: 0 | Shrink: 0</div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--orange)">🐪 3-Bend Saddle Calculator</b>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px"><input id="saddleRise" class="pill" placeholder="Obstacle Height" oninput="calcSaddle()"></div>
-    <div id="saddleResult" style="font-size:14px;color:var(--cyan);margin-top:12px;font-weight:900">Outer Mark: 0 | Shrink: 0</div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--cyan)">📊 PEC Conduit Fill Capacity</b>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-      <select id="conduitSize" class="pill" onchange="calcConduitFill()"><option value="0.5">1/2"</option><option value="0.75" selected>3/4"</option><option value="1.0">1"</option></select>
-      <select id="wireGauge" class="pill" onchange="calcConduitFill()"><option value="2.0">2.0 mm²</option><option value="3.5" selected>3.5 mm²</option><option value="5.5">5.5 mm²</option></select>
-    </div>
-    <div id="fillResult" style="font-size:14px;color:var(--orange);margin-top:12px;font-weight:900">Max Wires: 8</div>
-  </div>
-</div>
-
-<!-- WIRING ESTIMATION TAB - BUONG KAPALIT - COMPLETE + FIXED -->
-<div id="wiringTab" class="calc-section-view">
-  <div class="tutorial-box">
-    <b>📖 Electrical Wiring & PEC Load Calculator:</b>
-    <div style="margin-top:6px">Sinusunod ang PEC ampacity tables, 125% continuous load rule, at Parallel Feeders.</div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:15px;color:var(--orange)">⚡ Electrical Load Estimation</b>
-    <div style="margin-top:12px">
-      <label style="font-size:13px;color:var(--mut);font-weight:900;">MANUAL LOAD (WATTS):</label>
-      <input id="totalWatts" class="pill" placeholder="e.g. 3000" style="margin-top:8px">
-    </div>
-    <div style="margin-top:14px">
-      <select id="systemVoltage" class="pill">
-        <option value="230">230V Single Phase</option>
-        <option value="400">400V Three Phase</option>
-      </select>
-    </div>
-    
-    <div style="margin-top:16px;background:var(--card2);border:2px solid var(--border);border-radius:14px;padding:16px;display:grid;grid-template-columns:1fr 1.2fr;gap:12px;align-items:center;">
-      <div style="font-size:14px;color:var(--mut);font-weight:900;display:flex;flex-direction:column;gap:8px;">
-        <span>Total Load:</span><span>Current:</span><span>Wire Size:</span><span>Breaker (125%):</span>
-      </div>
-      <div id="wiringResult" style="font-size:15px;color:var(--cyan);font-weight:900;display:flex;flex-direction:column;gap:8px;text-align:right;">
-        <span>0 Watts</span><span>0.00 A</span><span>-</span><span>-</span>
-      </div>
-    </div>
-
-    <div style="margin-top:14px;background:var(--card2);border:2px solid var(--cyan);border-radius:14px;padding:16px;font-size:14px;line-height:1.7;color:var(--text);">
-      <b style="color:var(--cyan);font-size:15px;">📝 Detalyadong Kuwenta at Pormula:</b>
-      <div id="calcBreakdownText" style="margin-top:8px;color:var(--mut);font-weight:700;">Mag-lagay ng watts para makita ang pormula.</div>
-    </div>
-
-    <div id="visualDiagram" style="margin-top:14px;background:var(--card2);border:2px solid var(--border);border-radius:14px;padding:16px"></div>
-
-    <div style="margin-top:14px;background:var(--card2);border:2px solid var(--orange);border-radius:14px;padding:16px;">
-      <b style="font-size:14px;color:var(--orange)">🏢 System Distribution & Panel Layout</b>
-      <div id="distributionLayoutView" style="margin-top:10px;font-size:13px;line-height:1.6;color:var(--text)">
-        Mag-input muna ng load at pumili ng voltage system para sa layout.
-      </div>
-    </div>
-
-    <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div style="background:var(--card2);border:2px solid var(--border);border-radius:14px;padding:14px">
-        <b style="font-size:14px;color:var(--orange)">💰 Cost Estimator</b>
-        <div id="costEstimator" style="font-size:13px;margin-top:8px;color:var(--text);font-weight:900;line-height:1.5;">Mag-input ng watts para makita presyo</div>
-      </div>
-      <div style="background:var(--card2);border:2px solid var(--border);border-radius:14px;padding:14px">
-        <b style="font-size:14px;color:var(--cyan)">🛡️ Safety Check</b>
-        <div id="safetyChecker" style="margin-top:8px;font-size:13px">Mag-compute muna</div>
-      </div>
-    </div>
-
-    <div id="mecoWarning" style="font-size:14px;color:var(--warn);margin-top:12px;font-weight:900;line-height:1.6;"></div>
-    <div style="margin-top:16px;display:flex"><button class="calc-btn" style="width:100%;background:linear-gradient(135deg,var(--cyan),var(--orange));color:#000;font-size:15px;padding:18px;font-weight:900;" onclick="saveCurrentCalc()">💾 Save sa History</button></div>
-  </div>
-</div>
-
-<script>
-(function() {
-  const wattsEl = document.getElementById('totalWatts');
-  const voltEl = document.getElementById('systemVoltage');
-  if(!wattsEl) return;
-
-  function calcWiringFromCheckboxes() {
-    const watts = parseFloat(wattsEl.value) || 0;
-    const voltage = parseFloat(voltEl.value) || 230;
-    const isThree = voltage == 400;
-    
-    if (watts <= 0) {
-      document.getElementById('wiringResult').innerHTML = `<span>0 Watts</span><span>0.00 A</span><span>-</span><span>-</span>`;
-      document.getElementById('calcBreakdownText').innerHTML = `Mag-lagay ng watts para makita ang pormula.`;
-      return;
-    }
-
-    let current = isThree ? watts / (1.732 * voltage) : watts / voltage;
-    let current125 = current * 1.25;
-    const breakers = [15, 20, 30, 40, 50, 60, 70, 80, 100, 125, 150, 200];
-    let breaker = breakers.find(b => b >= current125) || 200;
-
-    let wire = "2.0 mm² (#14 AWG)";
-    if (breaker >= 20) wire = "3.5 mm² (#12 AWG)";
-    if (breaker >= 30) wire = "5.5 mm² (#10 AWG)";
-    if (breaker >= 50) wire = "8.0 mm² (#8 AWG)";
-    if (breaker >= 70) wire = "14 mm² (#6 AWG)";
-
-    document.getElementById('wiringResult').innerHTML = `<span>${watts.toLocaleString()} Watts</span><span>${current.toFixed(2)} A</span><span>${wire}</span><span>${breaker}A</span>`;
-    document.getElementById('calcBreakdownText').innerHTML = `- Pormula ng Current: ${watts.toLocaleString()} W ÷ ${isThree ? '(1.732 × 400V)' : '230V'} = ${current.toFixed(2)} A<br>- Breaker Sizing (125% Rule): ${current.toFixed(2)} A × 1.25 = ${current125.toFixed(2)} A<br>- Standard Breaker: <b style="color:var(--cyan)">${breaker}A</b><br>- Sukat ng Kable: <b style="color:var(--cyan)">${wire}</b> - PEC Compliant`;
-    
-    // IBABALIK KO YUNG MGA NASA IBABA NA NAWAWALA
-    document.getElementById('safetyChecker').innerHTML = `✅ Safe: ${wire} para sa ${breaker}A breaker. ${watts==3000 ? '<br>✅ Fixed na! Hindi na 2.0mm²' : ''}`;
-    document.getElementById('visualDiagram').innerHTML = `<div style="display:flex;align-items:center;gap:10px"><span style="border:2px solid var(--cyan);padding:6px 10px;border-radius:8px;font-weight:900">${breaker}A</span><span style="flex:1;height:4px;background:var(--orange)"></span><span style="font-weight:900;font-size:12px">${wire}</span></div>`;
-    document.getElementById('distributionLayoutView').innerHTML = `• Source / Utility: ${isThree ? 'Meralco 3-Phase (400V)' : 'Meralco 1-Phase (230V)'}<br>• Main Breaker (MCB): <b style="color:var(--cyan)">${breaker}A</b> Main Enclosure<br>• Main Feeder Cables: <b style="color:var(--orange)">${wire}</b><br>• PEC Color Coding: Red (Live), White (Neutral), Green (Ground)`;
-    document.getElementById('costEstimator').innerHTML = `Wire: ${wire}<br>Breaker: ${breaker}A<br>Est. Cost: Mag-input ng haba`;
-    document.getElementById('mecoWarning').innerHTML = watts > 5000 ? `⚠️ Mataas ang load (${watts}W). Ipa-check sa Licensed Electrician.` : ``;
-  }
-
-  wattsEl.addEventListener('input', calcWiringFromCheckboxes);
-  voltEl.addEventListener('change', calcWiringFromCheckboxes);
-  window.calcWiringFromCheckboxes = calcWiringFromCheckboxes;
-})();
-</script>
-<!-- SOLAR & GENERATOR SIZING TAB -->
-<div id="solargenTab" class="calc-section-view">
-  <div class="tutorial-box">
-    <b>☀️ Solar PV & Generator / Transformer Sizing:</b>
-    <div style="margin-top:6px">Pangkalahatang kalkulasyon para sa Solar Panels, Inverter, at GenSet kVA ng kahit anong sistema.</div>
-  </div>
-  
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--cyan)">☀️ General Solar PV System Sizing</b>
-    
-    <div style="margin-top:10px">
-      <label style="font-size:11px;font-weight:bold;color:var(--mut)">URI NG SISTEMA:</label>
-      <select id="solarSystemType" class="pill" style="margin-top:6px;width:100%;padding:10px;background:var(--card);color:var(--text);border:1px solid var(--border);" onchange="calcSolarGen()">
-        <option value="gridtied">Grid-Tied (Direct to Main Panel)</option>
-        <option value="offgrid">Off-Grid / Hybrid (w/ Battery Bank)</option>
-      </select>
-    </div>
-
-    <div id="batteryContainer" style="margin-top:10px; display:none;">
-      <label style="font-size:11px;font-weight:bold;color:var(--orange)">BATTERY SYSTEM VOLTAGE:</label>
-      <select id="batteryVoltage" class="pill" style="margin-top:6px;width:100%;padding:10px;background:var(--card);color:var(--text);border:1px solid var(--border);" onchange="calcSolarGen()">
-        <option value="12">12 Volts (Small / DIY Setup)</option>
-        <option value="24">24 Volts (Medium Setup)</option>
-        <option value="48" selected>48 Volts (Standard / Large Setup)</option>
-      </select>
-    </div>
-
-    <div style="margin-top:10px;display:flex;gap:10px;">
-      <div style="flex:1;">
-        <label style="font-size:11px;font-weight:bold;color:var(--mut)">PANEL WATTAGE (W):</label>
-        <input id="panelWattage" class="pill" value="660" placeholder="e.g. 660" style="margin-top:6px;width:100%;" oninput="calcSolarGen()">
-      </div>
-      <div style="flex:1;">
-        <label style="font-size:11px;font-weight:bold;color:var(--mut)">BILANG NG PANELS (PCS):</label>
-        <input id="panelQty" class="pill" placeholder="e.g. 78" style="margin-top:6px;width:100%;" oninput="calcSolarGen()">
-      </div>
-    </div>
-
-    <div style="margin-top:10px;">
-      <label style="font-size:11px;font-weight:bold;color:var(--mut)">LABOR RATE PER kW (PHP - OPTIONAL):</label>
-      <input id="laborRateKw" class="pill" placeholder="e.g. 7000 (Iwanang blanko kung wala)" style="margin-top:6px;width:100%;" oninput="calcSolarGen()">
-    </div>
-    
-    <div style="margin-top:12px;background:var(--card2);border:2px solid var(--border);border-radius:12px;padding:14px;font-size:13px;line-height:1.6;color:var(--text);">
-      <div id="solarResult" style="font-weight:900;color:var(--cyan)">Mag-input ng Watts at Dami ng Panel para makita ang specs.</div>
-         </div>
-        </div>
-    <div style="margin-top:16px;display:flex"><button class="calc-btn" style="width:100%;background:linear-gradient(135deg,var(--cyan),var(--orange));color:#000;font-size:15px;padding:18px;font-weight:900;" onclick="saveSolarHistory()">💾 Save sa History</button></div>
-
-      
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--orange)">⚡ Generator & Transformer kVA Sizing</b>
-    <div style="margin-top:10px">
-      <label style="font-size:11px;font-weight:bold;color:var(--mut)">TOTAL LOAD (WATTS):</label>
-<input id="genWatts" class="pill" placeholder="e.g. 50000" style="margin-top:6px;width:100%;" oninput="calcGen()">    </div>
-    <div style="margin-top:12px;background:var(--card2);border:2px solid var(--border);border-radius:12px;padding:14px;font-size:13px;line-height:1.6;color:var(--text);">
-      <div id="genResult" style="font-weight:900;color:var(--orange)">Mag-input ng watts para sa kVA rating.</div>
-    </div>
-  </div>
-</div>
-
-<!-- PEC & VOLTAGE DROP TAB -->
-<div id="pecTab" class="calc-section-view">
-  <div class="tutorial-box">
-    <b>📖 PEC & Voltage Drop Calculator:</b>
-    <div style="margin-top:6px">Kalkulasyon ng voltage drop batay sa PEC standards at quick reference guidelines.</div>
-  </div>
-
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--cyan)">📉 Voltage Drop Calculator (PEC Based)</b>
-    
-    <div style="margin-top:10px;">
-      <label style="font-size:11px;font-weight:bold;color:var(--mut)">SYSTEM VOLTAGE / PHASE:</label>
-      <select id="vdSysVoltage" class="pill" style="margin-top:6px;width:100%;padding:10px;background:var(--card);color:var(--text);border:1px solid var(--border);" onchange="calcVoltageDrop()">
-        <option value="230">230V Single Phase (Standard Residential)</option>
-        <option value="400">400V 3-Phase (Commercial / Industrial)</option>
-      </select>
-    </div>
-
-    <div style="margin-top:10px;display:flex;gap:10px;">
-      <div style="flex:1;">
-        <label style="font-size:11px;font-weight:bold;color:var(--mut)">CURRENT (AMPS):</label>
-        <input id="vdAmps" class="pill" type="number" placeholder="e.g. 20" style="margin-top:6px;width:100%;" oninput="calcVoltageDrop()">
-      </div>
-      <div style="flex:1;">
-        <label style="font-size:11px;font-weight:bold;color:var(--mut)">DISTANCE ONE-WAY (METERS):</label>
-        <input id="vdDistance" class="pill" type="number" placeholder="e.g. 40" style="margin-top:6px;width:100%;" oninput="calcVoltageDrop()">
-      </div>
-    </div>
-
-    <div style="margin-top:10px;">
-      <label style="font-size:11px;font-weight:bold;color:var(--mut)">WIRE SIZE (THHN/THWN-2 COPPER):</label>
-      <select id="vdWireSize" class="pill" style="margin-top:6px;width:100%;padding:10px;background:var(--card);color:var(--text);border:1px solid var(--border);" onchange="calcVoltageDrop()">
-        <option value="0.00538">2.0 mm² (#14 AWG)</option>
-        <option value="0.00338" selected>3.5 mm² (#12 AWG)</option>
-        <option value="0.00213">5.5 mm² (#10 AWG)</option>
-        <option value="0.00134">8.0 mm² (#8 AWG)</option>
-        <option value="0.00084">14 mm² (#6 AWG)</option>
-        <option value="0.00053">22 mm² (#4 AWG)</option>
-        <option value="0.00033">38 mm² (#2 AWG)</option>
-        <option value="0.00026">50 mm² (#1/0 AWG)</option>
-        <option value="0.00021">60 mm² (#2/0 AWG)</option>
-        <option value="0.00017">80 mm² (#3/0 AWG)</option>
-        <option value="0.00014">100 mm² (#4/0 AWG)</option>
-      </select>
-    </div>
-
-    <div style="margin-top:12px;background:var(--card2);border:2px solid var(--border);border-radius:12px;padding:14px;font-size:13px;line-height:1.6;color:var(--text);">
-      <div id="vdResult" style="font-weight:900;color:var(--cyan)">Mag-input ng Current at Distansya para ma-compute ang Voltage Drop.</div>
-    </div>
-  </div>
-
-  <div class="card-box" style="margin-top:15px;">
-    <b style="font-size:14px;color:var(--orange)">📖 PEC Quick Reference Guide</b>
-    <div style="margin-top:10px;font-size:12.5px;line-height:1.6;color:var(--mut);">
-      • <b>Standard PH Color Coding:</b><br>
-      &nbsp;&nbsp;- Phase A: Red | Phase B: Yellow | Phase C: Blue<br>
-      &nbsp;&nbsp;- Neutral: White | Ground: Green / Bare Copper<br><br>
-      • <b>Max Voltage Drop Limit (PEC):</b><br>
-      &nbsp;&nbsp;- Feeder + Branch Circuit: Max 3% to 5% recommended.<br><br>
-      • <b>Continuous Load Rule:</b><br>
-      &nbsp;&nbsp;- Gumamit ng 125% multiplier sa maximum continuous load para sa sizing ng Breaker at Kable.
-    </div>
-  </div>
-</div>
-
-<!-- MERALCO BILL TAB -->
-<div id="billTab" class="calc-section-view">
-  <div class="tutorial-box"><b>💡 Meralco Bill Hub:</b><div style="margin-top:6px">Piliin kung anong tool ang gusto mong gamitin para sa iyong Meralco bill.</div></div>
-  
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:12px;">
-    <button id="btnRevTab" class="calc-btn" style="background:var(--cyan);color:#000;font-weight:bold;padding:8px 4px;font-size:12px;" onclick="switchBillSubTab('reverse')">🧮 Reverse</button>
-    <button id="btnCompTab" class="calc-btn" style="background:var(--card2);color:var(--text);border:1px solid var(--cyan);font-weight:bold;padding:8px 4px;font-size:12px;" onclick="switchBillSubTab('compare')">🔄 Compare</button>
-    <button id="btnLifeTab" class="calc-btn" style="background:var(--card2);color:var(--text);border:1px solid var(--cyan);font-weight:bold;padding:8px 4px;font-size:12px;" onclick="switchBillSubTab('lifeline')">🏷️ Lifeline</button>
-  </div>
-
-  <!-- 1. Reverse Estimator Container -->
-  <div id="subTabReverse" style="margin-top:14px;">
-    <div class="card-box">
-      <b style="font-size:14px;color:var(--cyan)">📋 REVERSE BILL ESTIMATOR</b>
-      
-      <div style="margin-top:12px">
-        <label style="font-size:11px;font-weight:bold;color:var(--mut)">URI NG KUSTOMER / PASILIDAD:</label>
-        <div style="position:relative; margin-top:6px;">
-          <select id="custClassification" style="width:100%; background:var(--card2); color:var(--text); border:1px solid var(--cyan); border-radius:30px; padding:12px 16px; font-size:14px; appearance:none; -webkit-appearance:none; outline:none;" onchange="updateDefaultRate()">
-            <option value="residential" style="background:#111; color:#fff;" selected>Residential (Bahay) - ~₱14.80/kWh</option>
-            <option value="commercial" style="background:#111; color:#fff;">Commercial / School (Paaralan) - ~₱13.50/kWh</option>
-            <option value="industrial" style="background:#111; color:#fff;">Industrial (Pabrika) - ~₱12.00/kWh</option>
-          </select>
-          <div style="position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; color:var(--cyan); font-size:12px;">▼</div>
-        </div>
-      </div>
-
-      <div style="margin-top:12px">
-        <label style="font-size:11px;font-weight:bold;color:var(--mut)">TOTAL NA BABAYARAN SA BILL (PHP):</label>
-        <input id="inputBillAmount" type="number" class="pill" placeholder="e.g. 3500 o 540000" style="margin-top:6px;width:100%;font-size:1.2rem;color:var(--cyan);" oninput="calculateBillFromPrice()">
-      </div>
-
-      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div>
-          <label style="font-size:11px;font-weight:bold;color:var(--mut)">ESTIMATED RATE:</label>
-          <input id="billRatePerKwh" type="number" step="0.1" class="pill" value="14.80" style="margin-top:6px;width:100%;" oninput="calculateBillFromPrice()">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:bold;color:var(--mut)">ARAW SA ISANG BUWAN:</label>
-          <input id="billDays" type="number" class="pill" value="30" style="margin-top:6px;width:100%;" oninput="calculateBillFromPrice()">
-        </div>
-      </div>
-
-      <div style="margin-top:16px;background:var(--card2);border:2px solid var(--cyan);border-radius:14px;padding:16px">
-        <div style="font-size:14px;font-weight:900;color:var(--mut);margin-bottom:8px">MGA DETALYE NG KONSUMO:</div>
-        <div id="reverseBillResults" style="font-size:14px;line-height:1.7;color:var(--text);font-weight:bold">
-          Mag-input ng halaga sa itaas upang makita ang breakdown.
-        </div>
-      </div>
-
-      <div style="margin-top:14px"><button class="calc-btn" style="width:100%;background:linear-gradient(135deg,var(--cyan),var(--orange));color:#000;font-size:15px;padding:14px;font-weight:900;" onclick="saveBillHistory()">💾 Save Bill Breakdown</button></div>
-    </div>
-  </div>
-
-  <!-- 2. Bill Comparison Container -->
-  <div id="subTabCompare" style="margin-top:14px;display:none;">
-    <div class="card-box">
-      <b style="font-size:14px;color:var(--cyan)">🔄 PREVIOUS VS. CURRENT BILL COMPARISON</b>
-      <div style="font-size:11px;color:var(--mut);margin-top:4px;">Ikapares ang nakaraang bill sa kasalukuyang bill para makita ang trend.</div>
-
-      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div>
-          <label style="font-size:11px;font-weight:bold;color:var(--mut)">NAKARAANG BILL (PHP):</label>
-          <input id="prevBillAmount" type="number" class="pill" placeholder="e.g. 3500" style="margin-top:6px;width:100%;" oninput="compareBills()">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:bold;color:var(--cyan)">KASALUKUYANG BILL (PHP):</label>
-          <input id="currBillAmount" type="number" class="pill" placeholder="e.g. 3800" style="margin-top:6px;width:100%;" oninput="compareBills()">
-        </div>
-      </div>
-
-      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div>
-          <label style="font-size:11px;font-weight:bold;color:var(--mut)">PREV KWH (Optional):</label>
-          <input id="prevKwhAmount" type="number" class="pill" placeholder="e.g. 250" style="margin-top:6px;width:100%;" oninput="compareBills()">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:bold;color:var(--cyan)">CURR KWH (Optional):</label>
-          <input id="currKwhAmount" type="number" class="pill" placeholder="e.g. 260" style="margin-top:6px;width:100%;" oninput="compareBills()">
-        </div>
-      </div>
-
-      <div style="margin-top:16px;background:var(--card2);border:1px solid var(--cyan);border-radius:14px;padding:16px">
-        <div style="font-size:13px;font-weight:bold;color:var(--mut);margin-bottom:8px">RESULTA NG PAGHAHAMBING:</div>
-        <div id="comparisonResults" style="font-size:13px;line-height:1.7;color:var(--text);">
-          Mag-input ng halaga ng Nakaraan at Kasalukuyang Bill para makita ang resulta.
-        </div>
-      </div>
-
-      <div style="margin-top:14px">
-        <button class="calc-btn" style="width:100%;background:linear-gradient(135deg,var(--cyan),var(--orange));color:#000;font-size:15px;padding:14px;font-weight:900;" onclick="saveComparisonHistory()">💾 Save Comparison History</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. Lifeline Subsidy Checker Container -->
-  <div id="subTabLifeline" style="margin-top:14px;display:none;">
-    <div class="card-box">
-      <b style="font-size:14px;color:var(--cyan)">🏷️ MERALCO LIFELINE SUBSIDY CHECKER</b>
-      <div style="font-size:11px;color:var(--mut);margin-top:4px;">Suriin kung ang konsumo (kWh) ay pasok sa diskwento ng pamahalaan para sa mahihirap na konsumedor.</div>
-
-      <div style="margin-top:12px">
-        <label style="font-size:11px;font-weight:bold;color:var(--mut)">BUWANANG KONSUMO (kWh):</label>
-        <input id="lifelineKwh" type="number" class="pill" placeholder="e.g. 45" style="margin-top:6px;width:100%;font-size:1.2rem;color:var(--cyan);" oninput="checkLifelineSubsidy()">
-      </div>
-
-      <div style="margin-top:16px;background:var(--card2);border:1px solid var(--cyan);border-radius:14px;padding:16px">
-        <div style="font-size:13px;font-weight:bold;color:var(--mut);margin-bottom:8px">STATUS NG LIFESTYLE / LIFELINE SUBSIDY:</div>
-        <div id="lifelineResults" style="font-size:13px;line-height:1.7;color:var(--text);">
-          Mag-input ng buwanang kWh para malaman ang bracket at diskwento.
-        </div>
-      </div>
-
-      <div style="margin-top:14px">
-        <button class="calc-btn" style="width:100%;background:linear-gradient(135deg,var(--cyan),var(--orange));color:#000;font-size:15px;padding:14px;font-weight:900;" onclick="saveLifelineHistory()">💾 Save Lifeline Status</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- LOAD SCHEDULE BUILDER -->
-<div id="loadschedTab" class="calc-section-view">
-  <div class="tutorial-box">
-    <b>📋 Load Schedule Builder - Pang-Bahay / Pang-Building:</b>
-    <div style="margin-top:6px">Magdagdag ng appliances para auto-compute total load at suggested breaker.</div>
-  </div>
-  <div class="card-box">
-    <b style="font-size:14px;color:var(--cyan)">➕ Magdagdag ng Load</b>
-    <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-top:12px">
-      <input id="loadName" class="pill" placeholder="e.g. Aircon">
-      <input id="loadWatts" class="pill" placeholder="Watts" type="number">
-      <input id="loadQty" class="pill" placeholder="Qty" type="number" value="1">
-    </div>
-    <div style="margin-top:12px;display:flex;gap:10px">
-      <button class="calc-btn" style="flex:1;background:var(--card2);border-color:var(--cyan);color:var(--cyan);font-size:14px;" onclick="addLoadItem()">+ Add</button>
-      <button class="calc-btn" style="border-color:#ff3b5c;color:#ff3b5c;font-size:14px;" onclick="clearLoad()">Clear</button>
-    </div>
-  </div>
-  <div class="card-box"><b style="font-size:14px;color:var(--orange)">📊 Load List</b><div id="loadList" style="margin-top:12px"></div></div>
-</div>
-
-<!-- HISTORY -->
-<div id="historyTab" class="calc-section-view">
-  <div class="tutorial-box"><b>🕒 History - Lahat ng na-save mong computation:</b></div>
-  <div class="card-box">
-    <div id="historyList"></div>
-    <div style="margin-top:14px"><button class="calc-btn" style="width:100%;border-color:#ff3b5c;color:#ff3b5c;font-size:14px;padding:14px;font-weight:900;" onclick="if(confirm('Burahin lahat?')){calcHistory=[];localStorage.removeItem('chinhel_history');renderHistory();}">Burahin Lahat ng History</button></div>
-  </div>
-</div>
-
-<div class="footer-note">ChiNhel Pro V1.0 • First Release • Made for Filipino Electricians • PEC Based • Offline Ready<br>© 2026 ChiNhel XForge</div>
-
-<script>
-let calcInput = "";
-const calcScreen = document.getElementById('calcScreen');
-let isDegree = true;
-
-// Toggle sa pagitan ng Scientific (5 columns) at Basic (4 columns) mode
-function toggleSciLayout() {
-  const grid = document.getElementById('calcGrid');
-  if (grid) grid.classList.toggle('scientific-mode');
-}
-
-// Backspace (⌫) button logic
-function calcBackspace() {
-  if (calcInput.length > 0) {
-    calcInput = calcInput.slice(0, -1);
-  }
-  updateCalcDisplay();
-}
-
-// Toggle DEG at RAD mode
-function toggleDegRad() {
-  isDegree = !isDegree;
-  const btn = document.getElementById('degBtn');
-  if (btn) btn.textContent = isDegree ? 'deg' : 'rad';
-}
-
-// Helper para sa screen formatting
-function updateCalcDisplay() {
-  if (!calcScreen) return;
-  if (calcInput === "") {
-    calcScreen.innerHTML = '0<span class="cursor">|</span>';
-  } else {
-    let displayFormat = calcInput
-      .replace(/\*/g, '×')
-      .replace(/\//g, '÷')
-      .replace(/Math.PI/g, 'π')
-      .replace(/Math.E/g, 'e')
-      .replace(/Math.sqrt\(/g, '√(')
-      .replace(/Math.log10\(/g, 'lg(')
-      .replace(/Math.log\(/g, 'ln(');
-
-    calcScreen.innerHTML = displayFormat + '<span class="cursor">|</span>';
-  }
-}
-
-// Factorial helper
-function factorial(n) {
-  if (n < 0) return NaN;
-  if (n === 0 || n === 1) return 1;
-  let res = 1;
-  for (let i = 2; i <= n; i++) res *= i;
-  return res;
-}
-
-// Pagdikit ng values sa input
-function calcAppend(val) {
-  if (calcScreen && calcScreen.textContent.startsWith("0") && calcInput === "" && val !== '.') {
-    calcInput = "";
-  }
-  calcInput += val;
-  updateCalcDisplay();
-}
-
-function calcClear() {
-  calcInput = "";
-  if (calcScreen) {
-    calcScreen.innerHTML = '0<span class="cursor">|</span>';
-  }
-}
-
-// Pag-compute ng resulta
-function calcCompute() {
-  if (!calcInput) return;
-  let expression = calcInput;
-  let rawDisplay = calcScreen ? calcScreen.textContent.replace('|', '') : calcInput;
-
-  try {
-    if (isDegree) {
-      expression = expression.replace(/sin\(([^)]+)\)/g, (m, d) => `Math.sin((${d}) * Math.PI / 180)`);
-      expression = expression.replace(/cos\(([^)]+)\)/g, (m, d) => `Math.cos((${d}) * Math.PI / 180)`);
-      expression = expression.replace(/tan\(([^)]+)\)/g, (m, d) => `Math.tan((${d}) * Math.PI / 180)`);
-    }
-
-    expression = expression.replace(/(\d+)!/g, (m, n) => factorial(parseInt(n)));
-    expression = expression.replace(/%/g, '/100');
-    expression = expression.replace(/1\/([0-9.]+)/g, '1/$1');
-
-    let res = eval(expression);
-    if (isNaN(res) || !isFinite(res)) {
-      if (calcScreen) calcScreen.textContent = "Error";
-      calcInput = "";
-      return;
-    }
-
-    let formattedRes = Number(res.toFixed(8)).toLocaleString('en-US', { maximumFractionDigits: 8 });
-    
-    addCalcHistoryItem(`${rawDisplay} = ${formattedRes}`);
-
-    if (calcScreen) {
-      calcScreen.innerHTML = formattedRes + '<span class="cursor">|</span>';
-    }
-    calcInput = res.toString();
-  } catch (e) {
-    if (calcScreen) calcScreen.textContent = "Error";
-    calcInput = "";
-  }
-}
-
-let calcMemory = 0;
-
-// Function para i-update ang M indicator sa screen
-function updateMemoryIndicator() {
-  const indicator = document.getElementById('memIndicator');
-  if (indicator) {
-    // Kung ang memory ay hindi 0, ipakita ang 'M'; kung 0, itago
-    if (calcMemory !== 0) {
-      indicator.style.display = 'inline-block';
-    } else {
-      indicator.style.display = 'none';
-    }
-  }
-}
-
-// Memory Clear (MC)
-function memoryClear() {
-  calcMemory = 0;
-  updateMemoryIndicator();
-}
-
-// Memory Recall (MR)
-function memoryRecall() {
-  calcInput = calcMemory.toString();
-  updateCalcDisplay();
-}
-
-// Memory Add (M+)
-function memoryAdd() {
-  if (calcInput) {
-    try {
-      calcMemory += eval(calcInput);
-      updateMemoryIndicator();
-    } catch (e) {
-      // Error handling
-    }
-  }
-}
-
-// Memory Minus (M-)
-function memorySub() {
-  if (calcInput) {
-    try {
-      calcMemory -= eval(calcInput);
-      updateMemoryIndicator();
-    } catch (e) {
-      // Error handling
-    }
-  }
-}
-
-// Bagong version ng addCalcHistory item para clickable at mas madaling pamahalaan
-function addCalcHistoryItem(text) {
-  // 1. Kunin ang global history array o gumawa ng bago
-  if (typeof calcHistory === 'undefined') {
-    window.calcHistory = [];
-  }
-  
-  const newEntry = {
-    id: Date.now(),
-    type: 'Scientific',
-    date: new Date().toLocaleDateString('en-PH') + ' ' + new Date().toLocaleTimeString('en-PH', {hour: '2-digit', minute:'2-digit'}),
-    watts: text,
-    result: ''
-  };
-
-  // 2. Ilagay sa unahan at i-save sa tamang storage key ng app
-  calcHistory.unshift(newEntry);
-  localStorage.setItem('chinhel_history', JSON.stringify(calcHistory));
-  
-  // 3. I-trigger ang pag-render ng History Tab
-  if (typeof renderHistory === 'function') {
-    renderHistory();
-  }
-
-  // 4. Update din ang maliit na log sa screen kung meron man
-  const historyContainer = document.getElementById('calcHistoryLogs');
-  if (historyContainer) {
-    const div = document.createElement('div');
-    div.className = 'history-item';
-    div.textContent = text;
-    div.onclick = () => div.remove();
-    historyContainer.appendChild(div);
-    historyContainer.scrollTop = historyContainer.scrollHeight;
-  }
-}
-
-
-function toggleMenu() {
-  const menu = document.getElementById('dropdownMenu');
-  menu.classList.toggle('hidden');
-}
-
-function switchCalcTab(tabName, titleText, btnEl) {
-  document.querySelectorAll('.calc-section-view').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-  
-  const targetMap = {
-    'scientific': 'sciTab',
-    'converter': 'converterTab',
-    'workshop': 'workshopTab',
-    'pipe': 'pipeTab',
-    'wiring': 'wiringTab',
-    'solargen': 'solargenTab',
-    'pecdrop': 'pecTab',
-    'bill': 'billTab',
-    'loadsched': 'loadschedTab',
-    'history': 'historyTab'
-  };
-  
-  if (targetMap[tabName]) {
-    document.getElementById(targetMap[tabName]).classList.add('active');
-  }
-  if (btnEl) btnEl.classList.add('active');
-  
-  document.getElementById('currentMenuTitle').textContent = titleText;
-  document.getElementById('dropdownMenu').classList.add('hidden');
-}
-
-function convertPower(type) {
-  if (type === 'hp') {
-    let val = parseFloat(document.getElementById('powerHp').value) || 0;
-    document.getElementById('powerKw').value = (val * 0.7457).toFixed(2);
-    document.getElementById('powerWatts').value = (val * 745.7).toFixed(0);
-  } else if (type === 'kw') {
-    let val = parseFloat(document.getElementById('powerKw').value) || 0;
-    document.getElementById('powerHp').value = (val / 0.7457).toFixed(2);
-    document.getElementById('powerWatts').value = (val * 1000).toFixed(0);
-  } else if (type === 'watts') {
-    let val = parseFloat(document.getElementById('powerWatts').value) || 0;
-    document.getElementById('powerHp').value = (val / 745.7).toFixed(2);
-    document.getElementById('powerKw').value = (val / 1000).toFixed(2);
-  }
-}
-
-function convertLength(type) {
-  let mm = 0;
-  if (type === 'mm') mm = parseFloat(document.getElementById('lenMm').value) || 0;
-  else if (type === 'cm') mm = (parseFloat(document.getElementById('lenCm').value) || 0) * 10;
-  else if (type === 'm') mm = (parseFloat(document.getElementById('lenM').value) || 0) * 1000;
-  else if (type === 'inch') mm = (parseFloat(document.getElementById('lenInch').value) || 0) * 25.4;
-  else if (type === 'feet') mm = (parseFloat(document.getElementById('lenFeet').value) || 0) * 304.8;
-
-  if (type !== 'mm') document.getElementById('lenMm').value = mm.toFixed(1);
-  if (type !== 'cm') document.getElementById('lenCm').value = (mm / 10).toFixed(1);
-  if (type !== 'm') document.getElementById('lenM').value = (mm / 1000).toFixed(3);
-  if (type !== 'inch') document.getElementById('lenInch').value = (mm / 25.4).toFixed(2);
-  if (type !== 'feet') document.getElementById('lenFeet').value = (mm / 304.8).toFixed(2);
-}
-
-function convertWeight(type) {
-  if (type === 'kg') {
-    let val = parseFloat(document.getElementById('wKg').value) || 0;
-    document.getElementById('wLbs').value = (val * 2.20462).toFixed(2);
-  } else {
-    let val = parseFloat(document.getElementById('wLbs').value) || 0;
-    document.getElementById('wKg').value = (val / 2.20462).toFixed(2);
-  }
-}
-
-function convertTemp(type) {
-  if (type === 'c') {
-    let c = parseFloat(document.getElementById('tempC').value) || 0;
-    document.getElementById('tempF').value = ((c * 9/5) + 32).toFixed(1);
-  } else {
-    let f = parseFloat(document.getElementById('tempF').value) || 0;
-    document.getElementById('tempC').value = ((f - 32) * 5/9).toFixed(1);
-  }
-}
-
-function convertCurrency() {
-  const usd = parseFloat(document.getElementById('usdVal').value) || 0;
-  document.getElementById('phpResult').textContent = `PHP: ₱${(usd * 58.50).toFixed(2)}`;
-}
-
-function calculateOhm() {
-  const c = parseFloat(document.getElementById('ohmCurrent').value) || 0;
-  const r = parseFloat(document.getElementById('ohmResistance').value) || 0;
-  document.getElementById('ohmResult').textContent = `Voltage (V): ${(c * r).toFixed(2)} V`;
-}
-
-function calcPieCut() {
-  const angle = parseFloat(document.getElementById('pieAngle').value) || 90;
-  const segs = parseInt(document.getElementById('pieSegments').value) || 4;
-  document.getElementById('pieResult').innerHTML = `• Miter Angle: ${(angle / (segs * 2)).toFixed(2)}° | Segments: ${(angle / segs).toFixed(2)}°`;
-}
-
-function calcLettering() {
-  const d = parseFloat(document.getElementById('letDepth').value) || 150;
-  document.getElementById('letterResult').innerHTML = `• Side Return Strip Width: ${d + 20} mm`;
-}
-
-function calcTankSheet() {
-  const dia = parseFloat(document.getElementById('tankDia').value) || 800;
-  const h = parseFloat(document.getElementById('tankHeight').value) || 500;
-  document.getElementById('tankResult').innerHTML = `• Cut Length: ${(Math.PI * dia).toFixed(1)} mm | Area: ${(((Math.PI * dia) * h) / 1000000).toFixed(2)} m²`;
-}
-
-function calcWeldingSetting() {
-  const size = document.getElementById('rodSize').value;
-  let amp = size === "2.0" ? "35A - 55A" : size === "2.5" ? "60A - 90A" : "90A - 130A";
-  document.getElementById('weldingGuideResult').innerHTML = `• Amperage: ${amp}`;
-}
-
-function calcBend() {
-  const a = parseFloat(document.getElementById('bendAngle').value) || 0;
-  const r = parseFloat(document.getElementById('bendRadius').value) || 0;
-  const t = parseFloat(document.getElementById('bendThick').value) || 0;
-  document.getElementById('bendResult').textContent = `Total Bend Allowance: ${((Math.PI / 180) * a * (r + (0.44 * t))).toFixed(2)} mm`;
-}
-
-function calcPipeOffset() {
-  const rise = parseFloat(document.getElementById('pipeRise').value) || 0;
-  const angle = parseInt(document.getElementById('pipeAngle').value) || 30;
-  let mult = angle === 45 ? 1.414 : angle === 22 ? 2.613 : 2.0;
-  document.getElementById('pipeResult').innerHTML = `Distance: ${(rise * mult).toFixed(2)} | Shrink: ${(rise * 0.25).toFixed(2)}`;
-}
-
-function calcSaddle() {
-  const rise = parseFloat(document.getElementById('saddleRise').value) || 0;
-  document.getElementById('saddleResult').innerHTML = `Outer Mark: ${(rise * 2.5).toFixed(2)} | Shrink: ${(rise * 0.1875).toFixed(2)}`;
-}
-
-function calcConduitFill() {
-  const size = document.getElementById('conduitSize').value;
-  const wire = document.getElementById('wireGauge').value;
-  let max = 8;
-  if(size === "0.5") max = wire === "2.0" ? 6 : wire === "3.5" ? 4 : 2;
-  else if(size === "0.75") max = wire === "2.0" ? 10 : wire === "3.5" ? 8 : 5;
-  else if(size === "1.0") max = wire === "2.0" ? 16 : wire === "3.5" ? 12 : 8;
-  document.getElementById('fillResult').innerHTML = `Max Wires (40% Fill): ${max} Wires`;
-}
-
-function getStandardBreaker(targetAmps) {
-  const standardSizes = [15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 110, 125, 150, 175, 200, 225, 250, 300, 350, 400, 450, 500, 600, 700, 800, 1000, 1200, 1600, 2000];
-  for (let size of standardSizes) {
-    if (size >= targetAmps) return size + "A";
-  }
-  return Math.ceil(targetAmps) + "A (Custom)";
-}
-
-const WIRE_PRICES = {
-  "2.0": 45, "3.5": 68, "5.5": 110, "8.0": 180, "14.0": 320, 
-  "22.0": 520, "30.0": 750, "38.0": 950, "50.0": 1250, 
-  "60.0": 1550, "80.0": 1950, "100.0": 2400, "250mm": 4500
-};
-
-function updateDistributionLayout(v, total, cur, breaker, wire) {
-  const layoutEl = document.getElementById('distributionLayoutView');
-  if(!layoutEl || total <= 0) return;
-
-  const isThreePhase = v === 400;
-  layoutEl.innerHTML = `
-    • <b>Source / Utility:</b> Meralco ${isThreePhase ? '3-Phase (400V / 230V Wye)' : '1-Phase (230V)'}<br>
-    • <b>Main Breaker (MCB):</b> <span style="color:var(--cyan)">${breaker}</span> Main Enclosure<br>
-    • <b>Main Feeder Cables:</b> <span style="color:var(--orange)">${wire}</span><br>
-    &nbsp;&nbsp;&nbsp;└ <i>PEC Color Coding:</i> ${isThreePhase ? '<span style="color:#ff3b5c">Red (A)</span>, <span style="color:#facc15">Yellow (B)</span>, <span style="color:#00e5ff">Blue (C)</span>' : '<span style="color:#ff3b5c">Red (Live)</span>'}, <span style="color:#ffffff">White (Neutral)</span>, <span style="color:#00ff88">Green (Ground)</span><br>
-    • <b>Sub-Distribution:</b> Papunta sa mga Lighting, Power Outlets, at HVAC / Inverter Aircon Units (Samsung / AUX loads).
-  `;
-}
-
-function calcWiringFromCheckboxes() {
-  const total = parseFloat(document.getElementById('totalWatts').value) || 0;
-  const v = parseFloat(document.getElementById('systemVoltage').value) || 230;
-  
-  const cur = v === 400 ? total / (v * 1.732 * 0.85) : total / v;
-  const continuousCur = cur * 1.25;
-  const recommendedBreaker = getStandardBreaker(continuousCur);
-
-  let wire = "";
-  if (cur <= 15) wire = "2.0 mm² (#14 AWG)";
-  else if (cur <= 20) wire = "3.5 mm² (#12 AWG)";
-  else if (cur <= 30) wire = "5.5 mm² (#10 AWG)";
-  else if (cur <= 40) wire = "8.0 mm² (#8 AWG)";
-  else if (cur <= 50) wire = "14.0 mm² (#6 AWG)";
-  else if (cur <= 65) wire = "22.0 mm² (#4 AWG)";
-  else if (cur <= 85) wire = "30.0 mm² (#2 AWG)";
-  else if (cur <= 100) wire = "38.0 mm² (#1 AWG)";
-  else if (cur <= 130) wire = "50.0 mm² (1/0 AWG)";
-  else if (cur <= 150) wire = "60.0 mm² (2/0 AWG)";
-  else if (cur <= 175) wire = "80.0 mm² (3/0 AWG)";
-  else if (cur <= 200) wire = "100.0 mm² (4/0 AWG)";
-  else if (continuousCur <= 400) {
-    wire = "1 Set of 250 mm² THHN";
-  } else {
-    const sets = Math.ceil(continuousCur / 400);
-    wire = `${sets} Sets of 250 mm² Parallel`;
-  }
-
-  let warningText = "";
-  if (v === 230 && total > 20000) {
-    warningText = "⚠️ Babala: Ang " + total.toLocaleString() + "W ay napakalaki para sa 230V Single-Phase (" + cur.toFixed(0) + "A). Mas mainam na i-set sa 3-Phase (400V) para bumaba ang current at makatipid sa kable.";
-  }
-
-  document.getElementById('wiringResult').innerHTML = `
-    <span>${total.toLocaleString()} Watts</span>
-    <span>${cur.toFixed(2)} A</span>
-    <span style="font-size:13px; color:var(--cyan); font-weight:900;">${wire}</span>
-    <span>${recommendedBreaker}</span>
-  `;
-
-  document.getElementById('calcBreakdownText').innerHTML = `
-    • <b>Pormula ng Current:</b> ${total.toLocaleString()} W ÷ ${v === 400 ? '(400V × 1.732 × 0.85)' : v + 'V'} = <b>${cur.toFixed(2)} A</b><br>
-    • <b>Breaker Sizing (125% Rule):</b> ${cur.toFixed(2)} A × 1.25 = <b>${continuousCur.toFixed(2)} A</b><br>
-    • <b>Standard Breaker:</b> Pinili ang size na <b>${recommendedBreaker}</b>.<br>
-    • <b>Sukat ng Kable:</b> <b>${wire}</b>
-  `;
-  document.getElementById('mecoWarning').textContent = warningText;
-
-  updateWiringExtras(cur, wire, recommendedBreaker, v);
-  updateDistributionLayout(v, total, cur, recommendedBreaker, wire);
-}
-
-function updateWiringExtras(cur, wireStr, breaker, v){
-  const visual = document.getElementById('visualDiagram');
-  if(visual){
-    let wireColor = cur<=20?'#facc15':cur<=40?'#f97316':cur<=100?'#ef4444':'#991b1b';
-    let setsText = wireStr.includes("Sets") ? wireStr.split(' ')[0] + " Sets" : "1 Set";
-    visual.innerHTML = `<div style="display:flex;align-items:center;gap:14px;justify-content:center"><div style="width:70px;height:75px;border:2px solid var(--border);border-radius:10px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--cyan)">${breaker}</div><div style="width:80px;height:6px;background:${wireColor};border-radius:999px;position:relative"><div style="position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:900;color:var(--text);white-space:nowrap">${setsText}</div></div><div style="width:50px;height:50px;border-radius:50%;background:var(--card2);border:2px solid ${wireColor};display:flex;align-items:center;justify-content:center;font-size:1.3rem">💡</div></div>`;
-  }
-  
-  const costEl = document.getElementById('costEstimator');
-  if(costEl){
-    let key = "2.0";
-    if(wireStr.includes("250 mm²") || wireStr.includes("Sets")) key = "250mm";
-    else if(wireStr.includes("100.0")) key = "100.0";
-    else if(wireStr.includes("80.0")) key = "80.0";
-    else if(wireStr.includes("60.0")) key = "60.0";
-    else if(wireStr.includes("50.0")) key = "50.0";
-    else if(wireStr.includes("38.0")) key = "38.0";
-    else if(wireStr.includes("30.0")) key = "30.0";
-    else if(wireStr.includes("22.0")) key = "22.0";
-    else if(wireStr.includes("14.0")) key = "14.0";
-    else if(wireStr.includes("8.0")) key = "8.0";
-    else if(wireStr.includes("5.5")) key = "5.5";
-    else if(wireStr.includes("3.5")) key = "3.5";
-
-    const basePrice = WIRE_PRICES[key] || 45;
-    let totalConductors = v === 400 ? 4 : 2;
-    
-    if(wireStr.includes("Sets")) {
-      const matchSets = wireStr.match(/^(\d+)/);
-      if(matchSets) totalConductors = parseInt(matchSets[1]) * (v === 400 ? 4 : 2);
-    }
-    
-    const finalPricePerMeter = basePrice * totalConductors;
-    const est20m = finalPricePerMeter * 20;
-
-    costEl.innerHTML = `• <b>Wire Price:</b> ₱${finalPricePerMeter.toLocaleString()}/m<br>• <b>20m Est:</b> ₱${est20m.toLocaleString()}<br>• <span style="font-size:11px;color:var(--cyan)">Industrial rate</span>`;
-  }
-
-  const safetyEl = document.getElementById('safetyChecker');
-  if(safetyEl){
-    let safe = true; let msg = "";
-    const breakerNum = parseInt(breaker);
-    if(wireStr.includes("2.0") && breakerNum > 20){ safe = false; msg = "⚠️ 2.0mm² max 20A lang!"; }
-    else if(wireStr.includes("3.5") && breakerNum > 30){ safe = false; msg = "⚠️ 3.5mm² max 30A lang!"; }
-    else if(wireStr.includes("5.5") && breakerNum > 40){ safe = false; msg = "⚠️ 5.5mm² max 40A lang!"; }
-    else { msg = "✅ PEC Compliant - Safe configuration"; }
-    safetyEl.innerHTML = `<div style="padding:12px;border-radius:10px;background:${safe?'rgba(0,229,255,0.15)':'rgba(255,59,92,0.2)'};border:2px solid ${safe?'rgba(0,229,255,0.5)':'rgba(255,59,92,0.6)'};color:${safe?'var(--cyan)':'#ff3b5c'};font-size:12px;font-weight:900">${msg}</div>`;
-  }
-}
-function saveWiringHistory() {
-  const total = parseFloat(document.getElementById('totalWatts').value) || 0;
-  if (total <= 0) {
-    alert("Mag-compute ka muna ng wiring!");
-    return;
-  }
-
-  const v = parseFloat(document.getElementById('systemVoltage').value) || 230;
-  const cur = v === 400 ? total / (v * 1.732 * 0.85) : total / v;
-  const recommendedBreaker = getStandardBreaker(cur * 1.25);
-  
-  const resultText = `${total.toLocaleString()} Watts (${cur.toFixed(1)}A) → Breaker: ${recommendedBreaker}`;
-
-  if (typeof calcHistory === 'undefined') {
-    window.calcHistory = JSON.parse(localStorage.getItem('chinhel_history')) || [];
-  }
-
-  const newEntry = {
-    id: Date.now(),
-    type: 'Wiring',
-    date: new Date().toLocaleDateString('en-PH') + ' ' + new Date().toLocaleTimeString('en-PH', {hour: '2-digit', minute:'2-digit'}),
-    watts: total.toLocaleString() + ' Watts',
-    result: `Breaker ${recommendedBreaker} (${cur.toFixed(1)}A)`,
-    kwh: ''
-  };
-
-  calcHistory.unshift(newEntry);
-  localStorage.setItem('chinhel_history', JSON.stringify(calcHistory));
-  
-  if (typeof renderHistory === 'function') {
-    renderHistory();
-  }
-
-  alert("Na-save na sa History!");
-}
-
-
-function calcSolarGen() {
-    let systemType = document.getElementById('solarSystemType').value;
-    let panelWattage = parseFloat(document.getElementById('panelWattage').value) || 0;
-    let panelQty = parseFloat(document.getElementById('panelQty').value) || 0;
-    let laborRateKw = parseFloat(document.getElementById('laborRateKw').value) || 0;
-    let batteryContainer = document.getElementById('batteryContainer');
-    let solarResultDiv = document.getElementById('solarResult');
-    
-    if (systemType === 'offgrid') {
-        batteryContainer.style.display = 'block';
-    } else {
-        batteryContainer.style.display = 'none';
-    }
-
-    let batterySysVoltage = parseInt(document.getElementById('batteryVoltage').value) || 48;
-    
-    if (panelWattage > 0 && panelQty > 0) {
-        let peakSunHours = 4.2;
-        let electricRate = 15.06;
-        
-        let totalWatts = panelWattage * panelQty;
-        let totalKwp = totalWatts / 1000;
-        let estDailyKwh = totalKwp * peakSunHours;
-        let estMonthlySavings = estDailyKwh * 30 * electricRate;
-        
-        let recommendedInverterKw = Math.ceil(totalKwp);
-        let acCurrentAmps = (recommendedInverterKw * 1000) / 230;
-        let acBreakerAmps = Math.ceil(acCurrentAmps * 1.25);
-        
-        let standardBreakers = [15, 20, 30, 40, 50, 60, 75, 100, 125, 150, 200, 250, 300, 400];
-        let selectedAcBreaker = standardBreakers.find(b => b >= acBreakerAmps) || Math.ceil(acBreakerAmps);
-
-        let acWireSize = "3.5 mm² (#12 AWG)";
-        if (selectedAcBreaker > 20 && selectedAcBreaker <= 30) acWireSize = "5.5 mm² (#10 AWG)";
-        else if (selectedAcBreaker > 30 && selectedAcBreaker <= 40) acWireSize = "8.0 mm² (#8 AWG)";
-        else if (selectedAcBreaker > 40 && selectedAcBreaker <= 55) acWireSize = "14 mm² (#6 AWG)";
-        else if (selectedAcBreaker > 55 && selectedAcBreaker <= 70) acWireSize = "22 mm² (#4 AWG)";
-        else if (selectedAcBreaker > 70 && selectedAcBreaker <= 95) acWireSize = "38 mm² (#2 AWG)";
-        else if (selectedAcBreaker > 95 && selectedAcBreaker <= 125) acWireSize = "50 mm² (#1/0 AWG)";
-        else if (selectedAcBreaker > 125) acWireSize = "80 mm² o mas malaki (Parallel)";
-
-        let laborHTML = "";
-        let laborBOMText = "";
-        if (laborRateKw > 0) {
-            let totalLaborCost = totalKwp * laborRateKw;
-            laborHTML = `• Est. Labor Charge (@ ₱${laborRateKw.toLocaleString()}/kW): <b style="color:var(--orange);">₱${totalLaborCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</b><br>`;
-            laborBOMText = `• Installation & Wiring Labor (${totalKwp.toFixed(2)} kWp)\n`;
-        }
-        
-        let summaryText = "";
-
-        if (systemType === 'gridtied') {
-            solarResultDiv.innerHTML = `
-                • Total Solar Array Capacity: <b style="color:var(--cyan);">${totalWatts.toLocaleString()} Watts (${totalKwp.toFixed(2)} kWp)</b><br>
-                • Est. Daily Generation: <b>~${estDailyKwh.toFixed(1)} kWh / day</b><br>
-                • Est. Monthly Savings (@ ₱15.06/kWh): <b style="color:#00ff88;">~₱${estMonthlySavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} / month</b><br>
-                • Recommended Inverter: <b>${recommendedInverterKw} kW Grid-Tied Inverter</b><br>
-                • AC Main Breaker Rating: <b style="color:var(--orange);">${selectedAcBreaker}A 2P (230V)</b><br>
-                • Recommended AC Wire Size: <b style="color:var(--cyan);">${acWireSize} Cu</b><br>
-                ${laborHTML}
-                <div style="margin-top:8px;border-top:1px dashed var(--border);padding-top:6px;font-weight:normal;color:var(--mut);">
-                <b>🛠️ Grid-Tied Materials Guide (BOM):</b><br>
-                • Mounting Rails & Clamps para sa ${panelQty} panels (${panelWattage}W)<br>
-                • DC PV Cable (4.0 mm² o 6.0 mm² Solar Cable)<br>
-                • ${acWireSize} THHN/THWN-2 Copper Wire para sa AC output<br>
-                • ${selectedAcBreaker}A 2P AC Breaker & Disconnect Switch<br>
-                • DC Combiner Box w/ SPD & DC Breakers<br>
-                ${laborBOMText}
-                </div>
-                <button onclick="copyProposalSummary()" class="pill" style="margin-top:10px;width:100%;background:var(--cyan);color:#000;font-weight:bold;cursor:pointer;">📋 Copy Proposal Summary</button>
-            `;
-            
-            summaryText = `--- ChiNhel PRO V1 Solar Proposal ---
-System Type: Grid-Tied
-Capacity: ${totalWatts.toLocaleString()} W (${totalKwp.toFixed(2)} kWp)
-Est. Daily Generation: ~${estDailyKwh.toFixed(1)} kWh/day
-Est. Monthly Savings: ~₱${estMonthlySavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
-Inverter: ${recommendedInverterKw} kW Grid-Tied Inverter
-AC Breaker: ${selectedAcBreaker}A 2P
-AC Wire Size: ${acWireSize} Cu
-${laborRateKw > 0 ? `Est. Labor Cost: ₱${(totalKwp * laborRateKw).toLocaleString()}\n` : ''}
-BOM Guide:
-- ${panelQty}x ${panelWattage}W Panels & Mounting Hardware
-- ${acWireSize} THHN/THWN-2 Output Wires
-- ${selectedAcBreaker}A AC Breaker & DC Combiner Box`;
-
+<body class="min-h-screen antialiased selection:bg-cyan-500 selection:text-black pb-12">
+
+  <div id="root"></div>
+<button onclick="piLogin()" style="background:none;border:none;color:#fff;font-size:16px;cursor:pointer">Login with Pi</button>
+  <script type="text/babel">
+    function App() {
+      const [repos, setRepos] = React.useState([]);
+      const [loading, setLoading] = React.useState(true);
+      const [error, setError] = React.useState(false);
+
+      const [isDarkMode, setIsDarkMode] = React.useState(true);
+      const [viewMode, setViewMode] = React.useState('grid');
+      const [searchQuery, setSearchQuery] = React.useState('');
+      const [selectedCategory, setSelectedCategory] = React.useState('All');
+      const [copied, setCopied] = React.useState(false);
+
+      const toggleTheme = () => {
+        const newMode = !isDarkMode;
+        setIsDarkMode(newMode);
+        const html = document.getElementById('html-root');
+        if (newMode) {
+          html.classList.add('dark');
         } else {
-            let estimatedBatteryAh = Math.round((estDailyKwh * 1000 * 1.2) / batterySysVoltage);
-            let maxDcCurrent = (recommendedInverterKw * 1000) / batterySysVoltage;
-            let dcBreakerAmps = Math.ceil(maxDcCurrent * 1.25);
-            let dcBreakerSelected = standardBreakers.find(b => b >= dcBreakerAmps) || Math.ceil(dcBreakerAmps);
-            
-            let dcBatteryCable = "22 mm² (#4 AWG)";
-            if (dcBreakerSelected > 60 && dcBreakerSelected <= 100) dcBatteryCable = "38 mm² (#2 AWG)";
-            else if (dcBreakerSelected > 100 && dcBreakerSelected <= 150) dcBatteryCable = "50 mm² (#1/0 AWG)";
-            else if (dcBreakerSelected > 150) dcBatteryCable = "80 mm² o Heavy-Duty Battery Cables";
-
-            solarResultDiv.innerHTML = `
-                • Total Solar Array Capacity: <b style="color:var(--cyan);">${totalWatts.toLocaleString()} Watts (${totalKwp.toFixed(2)} kWp)</b><br>
-                • Est. Daily Generation: <b>~${estDailyKwh.toFixed(1)} kWh / day</b><br>
-                • Est. Monthly Savings (@ ₱15.06/kWh): <b style="color:#00ff88;">~₱${estMonthlySavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} / month</b><br>
-                • Recommended Inverter: <b>${recommendedInverterKw} kW Hybrid/Off-Grid Inverter</b><br>
-                • Est. Battery Bank (${batterySysVoltage}V): <b style="color:var(--orange);">${estimatedBatteryAh} Ah</b><br>
-                • AC Main Breaker Rating: <b style="color:var(--orange);">${selectedAcBreaker}A 2P (230V)</b><br>
-                • Recommended AC Wire Size: <b style="color:var(--cyan);">${acWireSize} Cu</b><br>
-                • DC Battery Breaker / Cable: <b>${dcBreakerSelected}A DC / ${dcBatteryCable}</b><br>
-                ${laborHTML}
-                <div style="margin-top:8px;border-top:1px dashed var(--border);padding-top:6px;font-weight:normal;color:var(--mut);">
-                <b>🛠️ Off-Grid Materials Guide (BOM):</b><br>
-                • Mounting Rails & Clamps para sa ${panelQty} panels (${panelWattage}W)<br>
-                • 4.0 mm² DC Solar Cable & MC4 Connectors<br>
-                • ${acWireSize} THHN/THWN-2 AC Output Wires<br>
-                • ${selectedAcBreaker}A AC Breaker & ${dcBreakerSelected}A DC Battery Breaker<br>
-                • Battery Bank (${batterySysVoltage}V, ${estimatedBatteryAh} Ah)<br>
-                • ${dcBatteryCable} Battery Cables w/ Lugs<br>
-                ${laborBOMText}
-                </div>
-                <button onclick="copyProposalSummary()" class="pill" style="margin-top:10px;width:100%;background:var(--cyan);color:#000;font-weight:bold;cursor:pointer;">📋 Copy Proposal Summary</button>
-            `;
-
-            summaryText = `--- ChiNhel PRO V1 Solar Proposal ---
-System Type: Off-Grid / Hybrid
-Capacity: ${totalWatts.toLocaleString()} W (${totalKwp.toFixed(2)} kWp)
-Est. Daily Generation: ~${estDailyKwh.toFixed(1)} kWh/day
-Est. Monthly Savings: ~₱${estMonthlySavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
-Inverter: ${recommendedInverterKw} kW Hybrid Inverter
-Battery Bank Requirement: ${batterySysVoltage}V, ${estimatedBatteryAh} Ah
-AC Breaker / Wire: ${selectedAcBreaker}A 2P / ${acWireSize} Cu
-DC Breaker / Cable: ${dcBreakerSelected}A DC / ${dcBatteryCable}
-${laborRateKw > 0 ? `Est. Labor Cost: ₱${(totalKwp * laborRateKw).toLocaleString()}\n` : ''}
-BOM Guide:
-- ${panelQty}x ${panelWattage}W Panels & Mounting Rails
-- ${batterySysVoltage}V ${estimatedBatteryAh}Ah Battery Bank
-- ${dcBreakerSelected}A DC Breaker & ${dcBatteryCable} Cables`;
+          html.classList.remove('dark');
         }
+      };
 
-        window.currentProposalText = summaryText;
-    } else {
-        solarResultDiv.innerHTML = "Mag-input ng Watts at Dami ng Panel para makita ang specs.";
-    }
+      const handleCopyShare = () => {
+        navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      };
 
-    // --- GENERATOR & TRANSFORMER FIX - DINAGDAG ---
-    const genWatts = parseFloat(document.getElementById('genWatts').value) || 0;
-    const genDiv = document.getElementById('genResult');
-    if (genDiv) {
-        if (genWatts <= 0) {
-            genDiv.innerHTML = "Mag-input ng watts para sa kVA rating.";
+      React.useEffect(() => {
+  let retries = 0;
+  const fetchRepos = () => {
+    fetch('https://api.github.com/users/jonelzky/repos?sort=updated&direction=desc')
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch " + res.status);
+        return res.json();
+      })
+      .then(data => {
+        const filtered = data.filter(repo => repo.name.toLowerCase() !== 'jonelzky.github.io');
+        setRepos(filtered);
+        setLoading(false);
+        setError(false);
+      })
+      .catch(err => {
+        console.error(err);
+        if (retries < 2) {
+          retries++;
+          setTimeout(fetchRepos, 1500); // retry after 1.5s - pure autofetch pa rin!
         } else {
-            const kva = genWatts / 1000 / 0.8;
-            const kvaWithReserve = kva * 1.25;
-            const sizes = [5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 100, 125, 150, 200, 250];
-            let recommended = sizes.find(s => s >= kvaWithReserve) || Math.ceil(kvaWithReserve);
-
-            genDiv.innerHTML = `
-                - Total Load: <b style="color:var(--cyan);">${genWatts.toLocaleString()} Watts</b><br>
-                - Required kVA (PF 0.8): <b>${kva.toFixed(2)} kVA</b><br>
-                - With 25% Reserve: <b style="color:var(--orange);">${kvaWithReserve.toFixed(2)} kVA</b><br>
-                - Recommended GenSet: <b style="color:var(--cyan);">${recommended} kVA</b><br>
-                - Recommended Transformer: <b>${recommended} kVA</b>
-            `;
+          setError(true);
+          setLoading(false);
         }
-    }
-}
-
-function copyProposalSummary() {
-    if (window.currentProposalText) {
-        navigator.clipboard.writeText(window.currentProposalText).then(() => {
-            alert("Nai-copy na sa clipboard ang Proposal Summary!");
-        }).catch(err => {
-            alert("Error sa pag-copy: " + err);
-        });
-    }
-}
-function saveSolarHistory() {
-  const panelWatts = parseFloat(document.getElementById('panelWattage')?.value) || 660;
-  const panelCount = parseFloat(document.getElementById('panelQty')?.value) || 0;
-  const systemType = document.getElementById('solarSystemType')?.value || 'grid-tied';
-  const laborRate = parseFloat(document.getElementById('laborRateKw')?.value) || 0;
-
-  const totalWatts = panelWatts * panelCount;
-  if (totalWatts <= 0) {
-    alert("Mag-input muna ng Panel Wattage at Bilang ng Panels!");
-    return;
-  }
-
-  const totalkWp = totalWatts / 1000;
-  const dailyGen = totalkWp * 4.2;
-  const monthlyGen = dailyGen * 30;
-  const monthlySavings = monthlyGen * 15.06; // Estimated rate per kWh
-  
-  // Sizing logic
-  const inverterKw = Math.ceil(totalkWp * 1.05);
-  const current = (totalWatts / 230).toFixed(1);
-  const breakerAmps = Math.ceil((totalWatts / 230) * 1.25 / 5) * 5; // standard approximation
-  const estLabor = laborRate > 0 ? laborRate * totalkWp : totalWatts * 10; // default rate fallback
-
-  if (typeof calcHistory === 'undefined') {
-    window.calcHistory = JSON.parse(localStorage.getItem('chinhel_history')) || [];
-  }
-
-  const systemName = systemType === 'gridtied' ? 'Grid-Tied' : 'Off-Grid / Hybrid';
-  
-  const newEntry = {
-    id: Date.now(),
-    type: 'Solar PV',
-    date: new Date().toLocaleDateString('en-PH') + ' ' + new Date().toLocaleTimeString('en-PH', {hour: '2-digit', minute:'2-digit'}),
-    watts: `${totalWatts.toLocaleString()} Watts (${totalkWp.toFixed(2)} kWp)`,
-    result: `System: ${systemName} | Gen: ~${dailyGen.toFixed(1)} kWh/day | Inverter: ${inverterKw} kW | Savings: ₱${Math.round(monthlySavings).toLocaleString()}/mo | Labor: ₱${Math.round(estLabor).toLocaleString()}`,
-    kwh: ''
+      });
   };
+  fetchRepos();
+}, []);
+      const latestRepo = repos.length > 0 ? repos[0] : null;
+      const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
+      const categories = ['All', ...new Set(repos.map(r => r.language).filter(Boolean))];
 
-  calcHistory.unshift(newEntry);
-  localStorage.setItem('chinhel_history', JSON.stringify(calcHistory));
-  
-  if (typeof renderHistory === 'function') {
-    renderHistory();
-  }
+      const otherRepos = repos.length > 1 ? repos.slice(1).filter(app => {
+        const matchesSearch = app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (app.description && app.description.toLowerCase().includes(searchQuery.toLowerCase()));
+        
+        const matchesCategory = selectedCategory === 'All' || app.language === selectedCategory;
 
-  alert("Na-save na ang kumpletong Solar Proposal sa History!");
-}
+        return matchesSearch && matchesCategory;
+      }) : [];
 
-function calcVoltageDrop() {
-    let sysVolt = parseFloat(document.getElementById('vdSysVoltage').value) || 230;
-    let amps = parseFloat(document.getElementById('vdAmps').value) || 0;
-    let distanceMeters = parseFloat(document.getElementById('vdDistance').value) || 0;
-    let wireResistancePerMeter = parseFloat(document.getElementById('vdWireSize').value) || 0.00338;
-    let vdResultDiv = document.getElementById('vdResult');
-
-    if (amps > 0 && distanceMeters > 0) {
-        let phaseFactor = (sysVolt === 400) ? 1.732 : 2.0;
-        let vDrop = phaseFactor * amps * distanceMeters * wireResistancePerMeter;
-        let vDropPercent = (vDrop / sysVolt) * 100;
-        let remainingVolt = sysVolt - vDrop;
-
-        let statusColor = "var(--cyan)";
-        let statusText = "✅ PASOK SA PEC STANDARD (Below 3% Drop)";
-
-        if (vDropPercent > 3.0 && vDropPercent <= 5.0) {
-            statusColor = "var(--orange)";
-            statusText = "⚠️ WARNING: Exceeds 3% Branch Limit. Consider Upsizing Wire.";
-        } else if (vDropPercent > 5.0) {
-            statusColor = "#ff4444";
-            statusText = "❌ CRITICAL: Exceeds 5% Total System Limit! Upsize Wire Immediately.";
-        }
-
-        vdResultDiv.innerHTML = `
-            • Total Voltage Drop: <b style="color:${statusColor};">${vDrop.toFixed(2)} Volts (${vDropPercent.toFixed(2)}%)</b><br>
-            • Voltage at Load End: <b>~${remainingVolt.toFixed(1)} Volts</b><br>
-            • System Voltage: <b>${sysVolt}V AC</b><br>
-            • Distance (One-Way): <b>${distanceMeters} Meters</b><br>
-            <div style="margin-top:8px;padding-top:6px;border-top:1px dashed var(--border);color:${statusColor};font-size:12px;font-weight:bold;">
-                ${statusText}
+      return (
+<div className="max-w-full mx-auto px-4 pt-6 flex flex-col min-h-screen justify-between">
+          
+          {/* Header */}
+          <header className="animated-border p-6 sm:p-7 rounded-2xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-2xl">
+            <div className="text-center sm:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-adaptive-badge border text-xs font-semibold mb-2">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                jonelzky.github.io
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-black neon-text-animated tracking-tight">
+                ChiNhel XFORGE
+              </h1>
+              <p className="text-xs text-adaptive-muted mt-1 font-medium"> 2026 Apps Hub</p>
             </div>
-        `;
-    } else {
-        vdResultDiv.innerHTML = "Mag-input ng Current at Distansya para ma-compute ang Voltage Drop.";
+            
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleCopyShare}
+                className="px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-400 text-cyan-400 flex items-center gap-1.5 text-xs font-bold transition active:scale-95 shadow-md"
+                title="Share Hub Link"
+              >
+                <i className={`fa-solid ${copied ? 'fa-check text-green-400' : 'fa-share-nodes'}`}></i>
+                <span>{copied ? 'Copied!' : 'Share'}</span>
+              </button>
+
+              <button 
+                onClick={toggleTheme}
+                className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-400 text-cyan-400 flex items-center justify-center transition active:scale-95 shadow-md"
+                title="Toggle Light/Dark Mode"
+              >
+                <i className={`fa-solid ${isDarkMode ? 'fa-sun text-orange-400' : 'fa-moon text-cyan-400'}`}></i>
+              </button>
+
+              <a 
+                href="https://github.com/jonelzky" 
+                target="_blank" 
+                className="px-4 py-2.5 bg-slate-900 border border-slate-700 hover:border-orange-400/60 rounded-xl text-xs font-semibold text-slate-200 flex items-center gap-2 transition active:scale-95 shadow-md"
+              >
+                <i className="fa-brands fa-github text-sm text-cyan-400"></i>
+                <span>GitHub</span>
+              </a>
+              
+            </div>
+          </header>
+
+          {/* TOTAL STATS COUNTER BAR */}
+          {!loading && repos.length > 0 && (
+            <div className="grid grid-cols-3 gap-3 mb-6 text-center">
+              <div className="app-card p-3">
+                <div className="text-[10px] sm:text-xs text-adaptive-muted font-bold uppercase tracking-wider">Total Apps</div>
+                <div className="text-lg sm:text-xl font-black text-cyan-400 mt-0.5">{repos.length}</div>
+              </div>
+              <div className="app-card p-3">
+                <div className="text-[10px] sm:text-xs text-adaptive-muted font-bold uppercase tracking-wider">Total Stars</div>
+                <div className="text-lg sm:text-xl font-black text-orange-400 mt-0.5">⭐ {totalStars}</div>
+              </div>
+              <div className="app-card p-3">
+                <div className="text-[10px] sm:text-xs text-adaptive-muted font-bold uppercase tracking-wider">Latest Sync</div>
+                <div className="text-[10px] sm:text-xs font-bold text-slate-300 mt-1 font-mono">
+                  {new Date(repos[0].updated_at).toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STICKY SEARCH ENGINE & FILTER BAR */}
+          {!loading && (
+            <div className="sticky top-0 z-50 py-3 mb-6 sticky-search-bar px-2 rounded-2xl transition-all">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5">
+                
+                {/* Search Engine Input */}
+                <div className="relative w-full sm:flex-1">
+                  <i className="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-cyan-400 text-xs"></i>
+                  <input 
+                    type="text"
+                    placeholder="Search engine: Type app name or keyword..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-8 py-2 bg-slate-900/20 dark:bg-slate-950 light:bg-white border border-slate-700/60 rounded-xl text-xs placeholder-slate-400 focus:outline-none focus:border-cyan-400 shadow-inner"
+                  />
+                  {searchQuery && (
+                    <button 
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs"
+                    >
+                      <i className="fa-solid fa-circle-xmark"></i>
+                    </button>
+                  )}
+                </div>
+
+                {/* Controls: Category Badges & View Switcher */}
+                <div className="flex items-center justify-between w-full sm:w-auto gap-2">
+                  {/* Category Filter Pills */}
+                  <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1">
+                    {categories.map((cat, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedCategory(cat)}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap transition ${selectedCategory === cat ? 'bg-gradient-to-r from-cyan-400 to-orange-400 text-slate-950 shadow-md' : 'bg-slate-900/20 border border-slate-700/40 text-slate-400 hover:text-cyan-300'}`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Grid / List View Toggle Buttons */}
+                  <div className="flex items-center gap-1 flex-shrink-0 border-l border-slate-700/40 pl-2">
+                    <button 
+                      onClick={() => setViewMode('grid')}
+                      className={`w-7 h-7 rounded-lg border text-xs flex items-center justify-center transition ${viewMode === 'grid' ? 'bg-cyan-500/20 border-cyan-400 text-cyan-400' : 'bg-slate-900/10 dark:bg-slate-950 light:bg-white border-slate-700/50 text-slate-400'}`}
+                      title="Grid View"
+                    >
+                      <i className="fa-solid fa-table-cells"></i>
+                    </button>
+
+                    <button 
+                      onClick={() => setViewMode('list')}
+                      className={`w-7 h-7 rounded-lg border text-xs flex items-center justify-center transition ${viewMode === 'list' ? 'bg-cyan-500/20 border-cyan-400 text-cyan-400' : 'bg-slate-900/10 dark:bg-slate-950 light:bg-white border-slate-700/50 text-slate-400'}`}
+                      title="List View"
+                    >
+                      <i className="fa-solid fa-list"></i>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          <main className="space-y-8 flex-1">
+            
+            {loading && (
+              <div className="text-center py-20">
+                <i className="fa-solid fa-spinner fa-spin text-3xl text-cyan-400 mb-3"></i>
+                <p className="text-xs text-adaptive-muted font-mono">Kukuhanin ang iyong mga apps mula sa GitHub...</p>
+              </div>
+            )}
+
+            {error && (
+              <div className="text-center py-12 text-orange-400 text-xs">
+                May nangyaring error sa pagkonekta sa GitHub API. Subukang i-refresh mamaya.
+              </div>
+            )}
+
+            {/* SECTION 1: LATEST APP SPOTLIGHT */}
+            {!loading && latestRepo && !searchQuery && selectedCategory === 'All' && (
+              <section>
+                <div className="flex items-center gap-2 mb-3 px-1">
+                  <i className="fa-solid fa-gears text-orange-400 text-sm animate-spin"></i>
+                  <h2 className="text-xs font-bold text-adaptive-muted uppercase tracking-wider">Latest Release Spotlight</h2>
+                </div>
+
+<div className="animated-border p-6 sm:p-7 rounded-2xl relative group">
+                  <div className="absolute top-4 right-4 bg-gradient-to-r from-cyan-400 to-orange-500 text-slate-950 font-black text-[10px] uppercase px-3.5 py-1 rounded-full shadow-lg">
+                    LATEST UPDATE
+                  </div>
+
+                  <div className="mb-4 pr-16">
+                    <span className="text-xs font-bold text-cyan-400 tracking-wide block mb-1 uppercase">
+                      {latestRepo.language || 'Web / Mobile App'}
+                    </span>
+                    <h3 className="text-2xl sm:text-3xl font-black group-hover:text-cyan-400 transition">
+                      {latestRepo.name}
+                    </h3>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-adaptive-muted leading-relaxed mb-6">
+                    {latestRepo.description || "Walang nakalagay na description ang repository na ito sa GitHub."}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-6 font-mono text-[10px]">
+                    {latestRepo.language && (
+                      <span className="bg-adaptive-tag px-2.5 py-1 rounded-md border">
+                        {latestRepo.language}
+                      </span>
+                    )}
+                    <span className="bg-adaptive-tag px-2.5 py-1 rounded-md border text-orange-400">
+                      ⭐ {latestRepo.stargazers_count} Stars
+                    </span>
+                    <span className="bg-adaptive-tag px-2.5 py-1 rounded-md border text-adaptive-muted">
+                      Updated: {new Date(latestRepo.updated_at).toLocaleDateString()}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <a 
+                      href={latestRepo.homepage || `https://jonelzky.github.io/${latestRepo.name}/`} 
+                      target="_blank"
+                      className="py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-400 via-blue-500 to-orange-500 text-slate-950 font-black text-xs text-center shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2 active:scale-95"
+                    >
+                      <i className="fa-solid fa-globe text-sm"></i>
+                      <span>Visit Live Site</span>
+                    </a>
+                    <a 
+                      href={`${latestRepo.html_url}/releases`} 
+                      target="_blank"
+                      className="py-3 px-4 rounded-xl bg-slate-950 dark:bg-slate-950 light:bg-slate-200 hover:opacity-90 text-cyan-300 border border-cyan-500/40 font-bold text-xs text-center transition flex items-center justify-center gap-2 active:scale-95 shadow-inner"
+                    >
+                      <i className="fa-solid fa-download text-sm"></i>
+                      <span>Download APK / Releases</span>
+                    </a>
+                  </div>
+                </div>
+              </section>
+            )}
+
+
+            {/* SECTION 2: LIST OF CREATED APPS */}
+            {!loading && (
+              <section className="pt-2">
+                          <div className="animated-border p-6 sm:p-7 rounded-2xl relative group">
+                <div className="flex items-center gap-2 mb-3 px-1">
+                  <i className="fa-solid fa-layer-group text-cyan-400 text-sm"></i>
+                  <h2 className="text-xs font-bold text-adaptive-muted uppercase tracking-wider">
+                    Created Apps Directory ({otherRepos.length})
+                  </h2>
+                </div>
+
+                {viewMode === 'grid' ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {otherRepos.map((app) => (
+                      <div key={app.id} className="app-card p-5 rounded-2xl flex flex-col justify-between gap-4 group">
+                        <div>
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="w-10 h-10 rounded-xl bg-slate-950/20 border border-slate-700/50 flex items-center justify-center text-cyan-400 text-lg flex-shrink-0 group-hover:border-cyan-400 transition">
+                              <i className="fa-solid fa-cube"></i>
+                            </div>
+                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-adaptive-badge border font-mono">
+                              {app.language || 'App'}
+                            </span>
+                          </div>
+                          <h3 className="text-base font-bold group-hover:text-cyan-400 transition mb-1">{app.name}</h3>
+                          <p className="text-xs text-adaptive-muted leading-relaxed line-clamp-2">
+                            {app.description || "Walang description."}
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-700/20">
+                          <a 
+                            href={app.homepage || `https://jonelzky.github.io/${app.name}/`} 
+                            target="_blank"
+                            className="py-2 px-2 rounded-xl bg-slate-950/10 dark:bg-slate-950 light:bg-slate-200 hover:bg-gradient-to-r hover:from-cyan-400 hover:to-orange-500 hover:text-slate-950 text-cyan-400 border border-cyan-500/30 text-[11px] font-bold text-center transition flex items-center justify-center gap-1"
+                          >
+                            <i className="fa-solid fa-globe text-[10px]"></i>
+                            <span>Visit</span>
+                          </a>
+                          <a 
+                            href={app.html_url} 
+                            target="_blank"
+                            className="py-2 px-2 rounded-xl bg-slate-950/10 dark:bg-slate-950 light:bg-slate-200 hover:opacity-80 border border-slate-700/50 text-[11px] font-semibold text-center transition flex items-center justify-center gap-1"
+                          >
+                            <i className="fa-solid fa-code text-[10px]"></i>
+                            <span>Code</span>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {otherRepos.map((app) => (
+                      <div key={app.id} className="app-card p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                        <div className="flex items-center gap-3.5">
+                          <div className="w-10 h-10 rounded-xl bg-slate-950/20 border border-slate-700/50 flex items-center justify-center text-cyan-400 text-lg flex-shrink-0 group-hover:border-cyan-400 transition">
+                            <i className="fa-solid fa-cube"></i>
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-sm font-bold group-hover:text-cyan-400 transition">{app.name}</h3>
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-adaptive-badge border font-mono">
+                                {app.language || 'App'}
+                              </span>
+                            </div>
+                            <p className="text-xs text-adaptive-muted mt-0.5">{app.description || "Walang description."}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <a 
+                            href={app.homepage || `https://jonelzky.github.io/${app.name}/`} 
+                            target="_blank"
+                            className="py-2 px-3 rounded-xl bg-slate-950/10 dark:bg-slate-950 light:bg-slate-200 hover:bg-gradient-to-r hover:from-cyan-400 hover:to-orange-500 hover:text-slate-950 text-cyan-400 border border-cyan-500/30 text-xs font-bold text-center transition flex items-center gap-1.5"
+                          >
+                            <i className="fa-solid fa-globe text-[10px]"></i>
+                            <span>Visit</span>
+                          </a>
+                          <a 
+                            href={app.html_url} 
+                            target="_blank"
+                            className="py-2 px-3 rounded-xl bg-slate-950/10 dark:bg-slate-950 light:bg-slate-200 hover:opacity-80 border border-slate-700/50 text-xs font-semibold text-center transition flex items-center gap-1.5"
+                          >
+                            <i className="fa-solid fa-code text-[10px]"></i>
+                            <span>Code</span>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {otherRepos.length === 0 && (
+                  <div className="text-center py-12 text-adaptive-muted text-xs">
+                    <i className="fa-solid fa-magnifying-glass text-2xl text-slate-600 mb-2 block"></i>
+                    Walang nakitang app na tumutugma sa iyong search o filter.
+                  </div>
+                )}
+                </div>
+              </section>
+            )}
+
+          </main>
+
+          {/* Footer */}
+          <footer className="animated-border p-6 sm:p-7 rounded-2xl relative group">
+            <p>ChiNhel XFORGE Engine &copy; 2026</p>
+            <p className="mt-1 text-[11px] font-mono">Powered by GitHub API on <span className="text-cyan-400">jonelzky.github.io</span></p>
+          </footer>
+        </div>
+      );
     }
-}
 
-function compareBills() {
-  const prevBill = parseFloat(document.getElementById('prevBillAmount').value) || 0;
-  const currBill = parseFloat(document.getElementById('currBillAmount').value) || 0;
-  const prevKwh = parseFloat(document.getElementById('prevKwhAmount').value) || 0;
-  const currKwh = parseFloat(document.getElementById('currKwhAmount').value) || 0;
-  
-  const resultsDiv = document.getElementById('comparisonResults');
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+<script>
+async function onIncompletePaymentFound(p){ console.log(p); }
 
-  if (prevBill <= 0 || currBill <= 0) {
-    resultsDiv.innerHTML = "Mag-input ng halaga ng Nakaraan at Kasalukuyang Bill para makita ang resulta.";
-    window.lastComparisonData = null;
-    return;
-  }
-
-  const billDiff = currBill - prevBill;
-  const billPercent = ((billDiff / prevBill) * 100).toFixed(1);
-
-  let statusText = "";
-  let statusBadge = "";
-  if (billDiff > 0) {
-    statusText = `Tumaas ng ₱${Math.abs(billDiff).toFixed(2)} (+${billPercent}%)`;
-    statusBadge = `<span style="background:#ff4d4d;color:#fff;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:bold;">▲ ${statusText}</span>`;
-  } else if (billDiff < 0) {
-    statusText = `Bumaba ng ₱${Math.abs(billDiff).toFixed(2)} (${billPercent}%)`;
-    statusBadge = `<span style="background:#00e676;color:#000;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:bold;">▼ ${statusText}</span>`;
-  } else {
-    statusText = "Walang Pagbabago (0%)";
-    statusBadge = `<span style="background:#888;color:#fff;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:bold;"> ${statusText}</span>`;
-  }
-
-  let kwhText = "";
-  let kwhStringData = "";
-  if (prevKwh > 0 && currKwh > 0) {
-    const kwhDiff = currKwh - prevKwh;
-    const kwhPercent = ((kwhDiff / prevKwh) * 100).toFixed(1);
-    const kwhSign = kwhDiff > 0 ? "+" : "";
-    kwhText = `<br>• Konsumo Variance: <b>${kwhSign}${kwhDiff.toFixed(1)} kWh (${kwhSign}${kwhPercent}%)</b>`;
-    kwhStringData = ` | kWh Diff: ${kwhSign}${kwhDiff.toFixed(1)}kWh`;
-  }
-
-  resultsDiv.innerHTML = `
-    <div style="margin-bottom:10px;">${statusBadge}</div>
-    • Nakaraang Bill: <b>₱${prevBill.toLocaleString()}</b><br>
-    • Kasalukuyang Bill: <b>₱${currBill.toLocaleString()}</b><br>
-    • Diperensya sa Halaga: <b>₱${billDiff >= 0 ? '+' : ''}${billDiff.toFixed(2)}</b>
-    ${kwhText}
-  `;
-  
-  window.lastComparisonData = `Prev: ₱${prevBill} → Curr: ₱${currBill} (${statusText}${kwhStringData})`;
-}
-
-function saveComparisonHistory() {
-  const prevBill = document.getElementById('prevBillAmount').value;
-  const currBill = document.getElementById('currBillAmount').value;
-  
-  if (!prevBill || !currBill || prevBill <= 0 || currBill <= 0) {
-    alert('Mag-input muna ng Nakaraan at Kasalukuyang Bill bago i-save!');
-    return;
-  }
-  
-  const entry = {
-    id: Date.now(),
-    type: 'Bill Comparison',
-    kwh: `₱${parseFloat(prevBill).toLocaleString()} ➔ ₱${parseFloat(currBill).toLocaleString()}`,
-    result: window.lastComparisonData || 'N/A',
-    date: new Date().toLocaleString('tl-PH')
-  };
-  
-  if (typeof calcHistory === 'undefined') {
-    window.calcHistory = [];
-  }
-  
-  calcHistory.unshift(entry);
-  if (calcHistory.length > 30) calcHistory.pop();
-  localStorage.setItem('chinhel_history', JSON.stringify(calcHistory));
-  
-  if (typeof renderHistory === 'function') {
-    renderHistory();
-  }
-  
-  alert('✅ Na-save ang Bill Comparison sa History!');
-}
-
-function switchBillSubTab(tabType) {
-  const revTab = document.getElementById('subTabReverse');
-  const compTab = document.getElementById('subTabCompare');
-  const lifeTab = document.getElementById('subTabLifeline');
-  
-  const btnRev = document.getElementById('btnRevTab');
-  const btnComp = document.getElementById('btnCompTab');
-  const btnLife = document.getElementById('btnLifeTab');
-
-  const allBtns = [btnRev, btnComp, btnLife];
-  allBtns.forEach(b => {
-    b.style.background = 'var(--card2)';
-    b.style.color = 'var(--text)';
-    b.style.border = '1px solid var(--cyan)';
-  });
-
-  revTab.style.display = 'none';
-  compTab.style.display = 'none';
-  lifeTab.style.display = 'none';
-
-  if (tabType === 'reverse') {
-    revTab.style.display = 'block';
-    btnRev.style.background = 'var(--cyan)';
-    btnRev.style.color = '#000';
-  } else if (tabType === 'compare') {
-    compTab.style.display = 'block';
-    btnComp.style.background = 'var(--cyan)';
-    btnComp.style.color = '#000';
-  } else if (tabType === 'lifeline') {
-    lifeTab.style.display = 'block';
-    btnLife.style.background = 'var(--cyan)';
-    btnLife.style.color = '#000';
+async function autoPiLogin(){
+  try{
+    await Pi.init({ version: "2.0" });
+    const auth = await Pi.authenticate(["username"], onIncompletePaymentFound);
+    const res = await fetch("https://backend.appstudio-u7cm9zhmha0ruwv8.piappengine.com/pi/auth/v1/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accessToken: auth.accessToken })
+    });
+    const data = await res.json();
+    window.piSessionToken = data.sessionToken;
+    console.log("Pi logged in:", data.user.username);
+  }catch(e){
+    console.log("Pi login skipped, hub still shows:", e);
   }
 }
-
-function checkLifelineSubsidy() {
-  const kwh = parseFloat(document.getElementById('lifelineKwh').value) || 0;
-  const resultsDiv = document.getElementById('lifelineResults');
-
-  if (kwh <= 0) {
-    resultsDiv.innerHTML = "Mag-input ng buwanang kWh para malaman ang bracket at diskwento.";
-    window.lastLifelineData = null;
-    return;
-  }
-
-  let statusHtml = "";
-  let discountText = "";
-
-  if (kwh <= 20) {
-    statusHtml = `<span style="background:#00e676;color:#000;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:bold;">✔ PASOK SA LIFELINE (Bracket 1: 0 - 20 kWh)</span>`;
-    discountText = "May mataas na porsyento ng diskwento sa Generation Charge (Malaki ang matitipid).";
-  } else if (kwh <= 50) {
-    statusHtml = `<span style="background:#00e676;color:#000;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:bold;">✔ PASOK SA LIFELINE (Bracket 2: 21 - 50 kWh)</span>`;
-    discountText = "May katamtamang diskwento sa ilalim ng lifeline program.";
-  } else if (kwh <= 100) {
-    statusHtml = `<span style="background:#ff9800;color:#000;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:bold;">⚠️ MARGINAL / MABABANG KONSUMO (51 - 100 kWh)</span>`;
-    discountText = "Maaaring pasok pa sa mababang tier depende sa umiiral na ERC guidelines ng taon.";
-  } else {
-    statusHtml = `<span style="background:#ff4d4d;color:#fff;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:bold;">✖ LUMAMPAS SA LIFELINE ( > 100 kWh)</span>`;
-    discountText = "Regular residential rate na ang ipapataw (Walang lifeline discount).";
-  }
-
-  resultsDiv.innerHTML = `
-    <div style="margin-bottom:10px;">${statusHtml}</div>
-    • Konsumo: <b>${kwh} kWh/buwan</b><br>
-    • Pagsusuri: <b>${discountText}</b>
-  `;
-
-  window.lastLifelineData = `Konsumo: ${kwh} kWh - ${kwh <= 50 ? 'Pasok sa Lifeline' : 'Lampas sa Lifeline'}`;
-}
-
-function saveLifelineHistory() {
-  const kwh = document.getElementById('lifelineKwh').value;
-  if (!kwh || kwh <= 0) {
-    alert('Mag-input muna ng kWh bago i-save!');
-    return;
-  }
-
-  const entry = {
-    id: Date.now(),
-    type: 'Lifeline Subsidy Check',
-    kwh: `${kwh} kWh`,
-    result: window.lastLifelineData || 'N/A',
-    date: new Date().toLocaleString('tl-PH')
-  };
-
-  if (typeof calcHistory === 'undefined') window.calcHistory = [];
-  calcHistory.unshift(entry);
-  if (calcHistory.length > 30) calcHistory.pop();
-  localStorage.setItem('chinhel_history', JSON.stringify(calcHistory));
-
-  if (typeof renderHistory === 'function') renderHistory();
-  alert('✅ Na-save ang Lifeline status sa History!');
-}
-
-function updateDefaultRate() {
-  const selectElement = document.getElementById('custClassification');
-  const rateInput = document.getElementById('billRatePerKwh');
-  
-  if (!selectElement || !rateInput) return;
-  
-  const classification = selectElement.value;
-  
-  if (classification === 'residential') {
-    rateInput.value = "14.80";
-  } else if (classification === 'commercial') {
-    rateInput.value = "13.50";
-  } else if (classification === 'industrial') {
-    rateInput.value = "12.00";
-  }
-  
-  calculateBillFromPrice();
-}
-
-function calculateBillFromPrice() {
-  const totalPaid = parseFloat(document.getElementById('inputBillAmount').value) || 0;
-  const rate = parseFloat(document.getElementById('billRatePerKwh').value) || 14.80;
-  const days = parseFloat(document.getElementById('billDays').value) || 30;
-  const resultsDiv = document.getElementById('reverseBillResults');
-
-  if (totalPaid <= 0) {
-    resultsDiv.innerHTML = "Mag-input ng halaga sa itaas upang makita ang breakdown.";
-    return;
-  }
-
-  const estimatedKwh = totalPaid / rate;
-  const estimatedAvgWatts = (estimatedKwh * 1000) / (days * 24);
-  const dailyCost = totalPaid / days;
-  const dailyKwh = estimatedKwh / days;
-
-  resultsDiv.innerHTML = `
-    • Tinatayang Konsumo (kWh): <b style="color:var(--cyan);font-size:1.1rem;">${estimatedKwh.toFixed(1)} kWh</b><br>
-    • Konsumo Kada Araw: <b style="color:var(--cyan);">${dailyKwh.toFixed(2)} kWh / araw</b><br>
-    • Tinatayang Average Load: <b style="color:var(--orange);">${estimatedAvgWatts.toFixed(0)} Watts</b><br>
-    • Gastos Kada Araw: <b>₱${dailyCost.toFixed(2)} / araw</b><br>
-    • Batayang Rate: <b>₱${rate.toFixed(2)} / kWh</b> (${days} araw)
-  `;
-  
-  window.lastReverseBillData = `Bill: ₱${totalPaid.toLocaleString()} → ~${estimatedKwh.toFixed(1)} kWh (~${estimatedAvgWatts.toFixed(0)}W)`;
-}
-
-function saveBillHistory(){
-  const totalPaid = document.getElementById('inputBillAmount').value;
-  if(!totalPaid || totalPaid <= 0){ alert('Mag-input muna ng halaga ng bill!'); return; }
-  
-  const entry = {
-    id: Date.now(),
-    type: 'Meralco Bill Estimator',
-    kwh: `₱${parseFloat(totalPaid).toLocaleString()}`,
-    result: window.lastReverseBillData || 'N/A',
-    date: new Date().toLocaleString('tl-PH')
-  };
-  calcHistory.unshift(entry);
-  if(calcHistory.length>30) calcHistory.pop();
-  localStorage.setItem('chinhel_history', JSON.stringify(calcHistory));
-  renderHistory();
-  alert('✅ Na-save ang Bill Breakdown sa History!');
-}
-
-let loadItems = [];
-function addLoadItem(){
-  const name = document.getElementById('loadName').value || 'Load';
-  const watts = parseFloat(document.getElementById('loadWatts').value)||0;
-  const qty = parseInt(document.getElementById('loadQty').value)||1;
-  if(watts<=0){alert('Lagyan ng watts!');return;}
-  loadItems.push({id:Date.now(), name, watts, qty, total:watts*qty});
-  document.getElementById('loadName').value=''; document.getElementById('loadWatts').value='';
-  renderLoadSchedule();
-}
-function renderLoadSchedule(){
-  const list = document.getElementById('loadList');
-  const totalW = loadItems.reduce((s,i)=>s+i.total,0);
-  const totalA = totalW/230;
-  if(list){
-    if(loadItems.length===0) list.innerHTML='<div style="font-size:13px;color:var(--mut);text-align:center;font-weight:bold;">Wala pang load - magdagdag sa taas</div>';
-    else list.innerHTML = loadItems.map(i=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:10px;border-bottom:2px solid var(--border);font-weight:bold;"><span>${i.qty}x ${i.name} (${i.watts}W)</span><span style="font-weight:900">${i.total}W</span><button onclick="removeLoad(${i.id})" style="border:none;background:none;color:#ff3b5c;cursor:pointer;font-size:16px;font-weight:900;">✖</button></div>`).join('') + `<div style="margin-top:12px;padding:12px;background:var(--card2);border-radius:10px;display:flex;justify-content:space-between;font-weight:900;font-size:14px"><span>Total: ${totalW}W / ${totalA.toFixed(2)}A</span><span>${totalW>0?getStandardBreaker(totalA*1.25):''}</span></div><div style="margin-top:10px;font-size:12px;color:var(--mut);font-weight:bold;">Suggested Circuits: ${Math.ceil(totalA/16)} x 20A circuits</div>`;
-  }
-}
-function removeLoad(id){ loadItems=loadItems.filter(x=>x.id!==id); renderLoadSchedule(); }
-function clearLoad(){ loadItems=[]; renderLoadSchedule(); }
-
-let calcHistory = JSON.parse(localStorage.getItem('chinhel_history')||'[]');
-function saveCurrentCalc(){
-  const watts = document.getElementById('totalWatts').value;
-  const resultEl = document.getElementById('wiringResult');
-  if(!watts || resultEl.innerText.includes('0 Watts')){alert('Mag-compute ka muna ng wiring!'); return;}
-  const entry = {
-    id: Date.now(),
-    type: 'Wiring',
-    watts: watts,
-    result: resultEl.innerText.replace(/\n/g, ' '),
-    date: new Date().toLocaleString('tl-PH')
-  };
-  calcHistory.unshift(entry);
-  if(calcHistory.length>30) calcHistory.pop();
-  localStorage.setItem('chinhel_history', JSON.stringify(calcHistory));
-  renderHistory();
-  alert('✅ Na-save sa History!');
-}
-
-function renderHistory(){
-  const list = document.getElementById('historyList');
-  if(!list) return;
-  if(calcHistory.length===0){ list.innerHTML='<div style="font-size:13px;color:var(--mut);text-align:center;padding:12px;font-weight:bold;">Wala pang history</div>'; return; }
-  list.innerHTML = calcHistory.map(h=>`
-    <div style="border:2px solid var(--border);background:var(--card2);border-radius:12px;padding:14px;margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:bold;"><b style="color:var(--cyan)">${h.type}</b><span style="color:var(--mut)">${h.date}</span></div>
-      <div style="font-size:14px;margin-top:8px;color:var(--text);font-weight:900">${h.type === 'Scientific' ? h.watts : (h.type === 'Wiring' ? h.watts : (h.type === 'Solar PV' ? h.watts + ' → ' + h.result : h.kwh + ' kWh → ' + h.result))}
-</div>
-      <div style="display:flex;gap:8px;margin-top:10px"><button class="calc-btn" style="font-size:12px;padding:8px 14px" onclick="shareHistory(${h.id})">Share</button><button class="calc-btn" style="font-size:12px;padding:8px 14px;color:#ff3b5c" onclick="deleteHistory(${h.id})">Delete</button></div>
-    </div>
-  `).join('');
-}
-
-function shareHistory(id){
-  const h = calcHistory.find(x=>x.id===id);
-  if(!h) return;
-  const text = `ChiNhel Pro Calc - ${h.type} Report\nDate: ${h.date}\nResult: ${h.result}\n\nGawa sa ChiNhel Pro Utility Calc App`;
-  if(navigator.share){ navigator.share({title:'ChiNhel Calculation', text:text}); }
-  else { navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : alert(text); alert('Na-copy na!'); }
-}
-function deleteHistory(id){ calcHistory = calcHistory.filter(x=>x.id!==id); localStorage.setItem('chinhel_history', JSON.stringify(calcHistory)); renderHistory(); }
-
-let isDark = true;
-document.getElementById('toggle').onclick = () => {
-  isDark = !isDark;
-  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  document.getElementById('toggle').textContent = isDark ? '🌙' : '☀️';
-};
-
-document.addEventListener('DOMContentLoaded', ()=>{
-  renderHistory();
-  renderLoadSchedule();
-});
-
+window.addEventListener("load", autoPiLogin);
 </script>
 </body>
 </html>
