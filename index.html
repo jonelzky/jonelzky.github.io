@@ -240,7 +240,7 @@
                 <i className="fa-brands fa-github text-sm text-cyan-400"></i>
                 <span>GitHub</span>
               </a>
-              <button onclick="piLogin()">Login with Pi</button>
+              <button id="piLoginBtn" onclick="piLogin()" style="background:#8B5CF6;color:white;border:none;padding:8px 14px;border-radius:20px;font-weight:bold;cursor:pointer;">Login with Pi</button>
             </div>
           </header>
 
@@ -522,6 +522,25 @@
 
     ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
-
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script>
+async function piLogin() {
+  try {
+    await Pi.init({ version: "2.0" });
+    const auth = await Pi.authenticate(["username"], function(p){ console.log(p); });
+    const accessToken = auth.accessToken;
+    const res = await fetch("https://backend.appstudio-u7cm9zhmha0ruwv8.piappengine.com/pi/auth/v1/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accessToken: accessToken })
+    });
+    const data = await res.json();
+    alert("Welcome, " + data.user.username + "!");
+    document.getElementById("piLoginBtn").innerText = "Hi, " + data.user.username;
+  } catch (e) {
+    alert("Pi login failed. Buksan mo ito sa Pi Browser.");
+  }
+}
+</script>
 </body>
 </html>
