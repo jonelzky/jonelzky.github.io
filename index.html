@@ -523,24 +523,6 @@
     ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 
-<script>
-async function piLogin() {
-  try {
-    await Pi.init({ version: "2.0" });
-    const auth = await Pi.authenticate(["username"], function(p){ console.log(p); });
-    const accessToken = auth.accessToken;
-    const res = await fetch("https://backend.appstudio-u7cm9zhmha0ruwv8.piappengine.com/pi/auth/v1/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ accessToken: accessToken })
-    });
-    const data = await res.json();
-    alert("Welcome, " + data.user.username + "!");
-    document.getElementById("piLoginBtn").innerText = "Hi, " + data.user.username;
-  } catch (e) {
-    alert("Pi login failed. Buksan mo ito sa Pi Browser.");
-  }
-}
-</script>
+
 </body>
 </html>
